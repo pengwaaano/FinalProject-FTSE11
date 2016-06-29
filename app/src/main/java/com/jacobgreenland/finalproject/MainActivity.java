@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,10 +15,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.jacobgreenland.finalproject.league.League;
+import com.jacobgreenland.finalproject.league.LeagueAPI;
+import com.jacobgreenland.finalproject.league.LeagueFragment;
+import com.jacobgreenland.finalproject.league.LeagueRepository;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Communicator {
 
     Toolbar toolbar;
+
+    //public static List<League> leagues;
+    @Inject
+    public static LeagueAPI _api;
+
+    public static LeagueRepository leagueRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +42,12 @@ public class MainActivity extends AppCompatActivity
 
         initialiseToolbar();
 
+        ((MyApp) getApplication()).getApiComponent().inject(this);
+
+        leagueRepository = new LeagueRepository(getApplicationContext());
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,7 +56,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        initialiseNavigationDrawer();
+        LeagueFragment lF = new LeagueFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.mainFragment, lF, "tabs");
+        ft.commit();
+
+        //initialiseNavigationDrawer();
 
     }
 
@@ -49,6 +77,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
+    @Override
     public void initialiseNavigationDrawer()
     {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -60,6 +89,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        List<League> leagues = leagueRepository.getRemoteSource().getLeagueList();
+        String shortLeague = "";
+        for(int i = 0; i < leagues.size(); i++)
+        {
+            shortLeague = leagues.get(i).getCaption();
+
+            shortLeague = shortLeague.replaceAll("\\d\\d\\d\\d\\S\\d\\d", "");
+
+            navigationView.getMenu().add(shortLeague);
+        }
     }
 
     @Override

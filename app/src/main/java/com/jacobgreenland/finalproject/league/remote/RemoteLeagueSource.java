@@ -28,6 +28,10 @@ public class RemoteLeagueSource {
     {
 
     }
+    public List<League> getLeagueList()
+    {
+        return leagues;
+    }
 
     public void getLeagues(LeagueAPI _api, final boolean initialLoad, final LeagueContract.View mView, final LeagueRepository leagueRepository, String season)
     {
@@ -45,13 +49,13 @@ public class RemoteLeagueSource {
                     @Override
                     public void onCompleted() {
                         Log.i("Retrofit", "onCompleted");
-                        if(initialLoad) {
+                        /*if(initialLoad) {
                             leagueRepository.getLocalSource().addData(leagues);
                         }
-                        else {
+                        else {*/
                             mView.setAdapters(leagues, true);
                             mView.showDialog();
-                        }
+                        //}
 
                     }
                     @Override
@@ -59,6 +63,7 @@ public class RemoteLeagueSource {
                         Log.i("Retrofit", "onNext");
 
                         leagues = newLeagues;
+                        //MainActivity.leagues = newLeagues;
                     }
                 }));
     }
