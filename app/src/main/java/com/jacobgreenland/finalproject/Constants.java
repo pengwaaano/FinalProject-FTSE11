@@ -6,5 +6,6 @@ package com.jacobgreenland.finalproject;
 public class Constants {
     public static final String BASE_URL = "http://api.football-data.org/v1";
     public static final String LEAGUE_URL = "/soccerseasons/";
-    public static final String CURRENT_SEASON = "2016";
+    public static final String TEAM_URL = "/teams/";
+    public static final String CURRENT_SEASON = "2015";
 }

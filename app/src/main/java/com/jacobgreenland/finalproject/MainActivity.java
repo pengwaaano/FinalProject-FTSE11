@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -11,11 +12,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.jacobgreenland.finalproject.league.League;
+import com.jacobgreenland.finalproject.league.model.League;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
 import com.jacobgreenland.finalproject.league.LeagueFragment;
 import com.jacobgreenland.finalproject.league.LeagueRepository;
@@ -29,14 +31,19 @@ public class MainActivity extends AppCompatActivity
 
     Toolbar toolbar;
 
-    //public static List<League> leagues;
+    public static List<League> leagues;
     @Inject
     public static LeagueAPI _api;
 
     public static LeagueRepository leagueRepository;
 
+    public static String chosenLeague;
+    public static String chosenLeagueID;
+    public static String chosenTeam;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,6 +52,14 @@ public class MainActivity extends AppCompatActivity
         ((MyApp) getApplication()).getApiComponent().inject(this);
 
         leagueRepository = new LeagueRepository(getApplicationContext());
+
+        MainFragment lF = new MainFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.mainFragment, lF, "tabs");
+        ft.commit();
+
+        //initialiseNavigationDrawer();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -55,15 +70,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        LeagueFragment lF = new LeagueFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.mainFragment, lF, "tabs");
-        ft.commit();
-
-        //initialiseNavigationDrawer();
-
+        fab.setVisibility(View.INVISIBLE);
     }
 
     public void initialiseToolbar()
@@ -71,33 +78,55 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
+
+        /*getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
     }
-
     @Override
     public void initialiseNavigationDrawer()
     {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle
+                (this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<League> leagues = leagueRepository.getRemoteSource().getLeagueList();
+        //List<League> leagues = leagueRepository.getRemoteSource().getLeagueList();
         String shortLeague = "";
+
         for(int i = 0; i < leagues.size(); i++)
         {
             shortLeague = leagues.get(i).getCaption();
 
             shortLeague = shortLeague.replaceAll("\\d\\d\\d\\d\\S\\d\\d", "");
 
-            navigationView.getMenu().add(shortLeague);
+            leagues.get(i).setCaption(shortLeague);
+
+            final int finalI = i;
+            navigationView.getMenu().add(shortLeague).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    chosenLeagueID = leagues.get(finalI).getId().toString();
+                    chosenLeague = leagues.get(finalI).getCaption();
+                    drawer.closeDrawer(GravityCompat.START);
+
+                    LeagueFragment lF = new LeagueFragment();
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                    ft.replace(R.id.mainFragment, lF, "tabs");
+                    ft.commit();
+
+                    return true;
+                }
+            });;
         }
     }
 
@@ -155,5 +184,16 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void switchContent(int id, Fragment fragment, View view) {
+        //Switch Fragments method
+        Log.d("Test", "Fragment changed!");
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(id, fragment, fragment.toString());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 }

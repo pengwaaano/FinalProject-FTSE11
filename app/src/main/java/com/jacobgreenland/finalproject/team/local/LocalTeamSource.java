@@ -1,4 +1,4 @@
-package com.jacobgreenland.finalproject.league.local;
+package com.jacobgreenland.finalproject.team.local;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,12 +14,12 @@ import io.realm.RealmResults;
 /**
  * Created by Jacob on 17/06/16.
  */
-public class LocalLeagueSource {
+public class LocalTeamSource {
 
     RealmConfiguration realmConfig;
     Realm realm;
 
-    public LocalLeagueSource(Context context)
+    public LocalTeamSource(Context context)
     {
         realmConfig = new RealmConfiguration.Builder(context).deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(realmConfig);

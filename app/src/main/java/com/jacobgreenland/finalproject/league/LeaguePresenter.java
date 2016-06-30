@@ -1,5 +1,7 @@
 package com.jacobgreenland.finalproject.league;
 
+import com.jacobgreenland.finalproject.league.model.League;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,35 +33,11 @@ public class LeaguePresenter implements LeagueContract.Presenter {
         mView.setPresenter(this);
     }
 
-    /*@Override
-    public LeagueRepository getRepository()
+    @Override
+    public void loadLeagueTable(LeagueAPI _api, final boolean initialLoad, String id)
     {
-        return songRepository;
+        leagueRepository.getRemoteSource().getLeagueTable(_api, initialLoad, mView, leagueRepository, id);
     }
-
-    @Override
-    public void setRepository(LeagueRepository songRepo)
-    {
-        //this.songRepository = songRepo;
-    }
-
-    @Override
-    public void loadUsers() {
-        i++;
-        s = "Users Loaded " + i;
-        mView.showUsers(s);
-    }*/
-    @Override
-    public void loadLeagues(LeagueAPI _api, final boolean initialLoad, String season)
-    {
-        leagueRepository.getRemoteSource().getLeagues(_api, initialLoad, mView, leagueRepository, season);
-    }
-    /*
-    @Override
-    public void loadLocalPopSongs()
-    {
-        mView.setAdapters(songRepository.getLocalSource().getDataFromLocal("Pop"),false);
-    }*/
 
     @Inject
     @Override

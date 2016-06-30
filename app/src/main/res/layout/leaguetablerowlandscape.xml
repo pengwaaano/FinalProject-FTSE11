@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/_30sdp"
+    android:id="@+id/categoryRowLayout">
+        <TextView
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="1."
+            android:id="@+id/teamPosition"
+            android:gravity="center"
+            android:layout_width="@dimen/_29sdp" />
+        <TextView
+            android:layout_width="@dimen/_230sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Medium Text"
+            android:id="@+id/teamName"
+            android:gravity="center_vertical" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamGamesPlayed"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamPoints"
+            
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamGoalDifference"
+            
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamGoalsFor"
+            
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamGoalsAgainst"
+            
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamWins"
+            
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamDraws"
+            
+            android:gravity="center" />
+        <TextView
+            android:layout_width="@dimen/_29sdp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="30"
+            android:id="@+id/teamLosses"
+            
+            android:gravity="center" />
+
+
+</LinearLayout>

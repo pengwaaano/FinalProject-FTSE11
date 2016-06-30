@@ -1,4 +1,4 @@
-package com.jacobgreenland.finalproject.league;
+package com.jacobgreenland.finalproject.league.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

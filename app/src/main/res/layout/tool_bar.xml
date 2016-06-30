@@ -12,5 +12,5 @@
         android:contentDescription="Logo"
         android:layout_height="@dimen/_20sdp"
         android:layout_gravity="center"
-        android:src="@drawable/finalprojectlogosmall"/>
+        android:src="@drawable/pannamatch"/>
     </android.support.v7.widget.Toolbar>

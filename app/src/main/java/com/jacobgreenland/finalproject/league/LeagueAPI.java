@@ -2,11 +2,13 @@ package com.jacobgreenland.finalproject.league;
 
 
 import com.jacobgreenland.finalproject.Constants;
+import com.jacobgreenland.finalproject.league.model.League;
 
 import java.util.List;
 
 import retrofit.http.GET;
 import retrofit.http.Headers;
+import retrofit.http.Path;
 import retrofit.http.Query;
 import rx.Observable;
 
@@ -23,4 +25,7 @@ public interface LeagueAPI {
     )
     @GET(Constants.LEAGUE_URL)
     Observable<List<League>> getLeagues(@Query("season") String season);
+
+    @GET(Constants.LEAGUE_URL + "{leagueID}/leagueTable")
+    Observable<LeagueTable> getLeagueTable(@Path("leagueID") String leagueID);
 }

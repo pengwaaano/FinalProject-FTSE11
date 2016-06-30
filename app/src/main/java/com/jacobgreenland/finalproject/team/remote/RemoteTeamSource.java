@@ -1,14 +1,12 @@
-package com.jacobgreenland.finalproject.league.remote;
+package com.jacobgreenland.finalproject.team.remote;
 
 import android.util.Log;
 
-import com.jacobgreenland.finalproject.league.model.League;
-import com.jacobgreenland.finalproject.league.LeagueAPI;
-import com.jacobgreenland.finalproject.league.LeagueContract;
-import com.jacobgreenland.finalproject.league.LeagueRepository;
-import com.jacobgreenland.finalproject.league.LeagueTable;
+import com.jacobgreenland.finalproject.team.TeamAPI;
+import com.jacobgreenland.finalproject.team.TeamContract;
+import com.jacobgreenland.finalproject.team.TeamRepository;
+import com.jacobgreenland.finalproject.team.model.Team;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observer;
@@ -19,36 +17,31 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by Jacob on 17/06/16.
  */
-public class RemoteLeagueSource {
+public class RemoteTeamSource {
 
     private CompositeSubscription _subscriptions = new CompositeSubscription();
 
-    List<League> leagues;
-    LeagueTable leagueTable;
+    private Team team;
 
-    public RemoteLeagueSource()
+    public RemoteTeamSource()
     {
 
     }
-    public List<League> getLeagueList()
+
+    public Team getTeamObject()
     {
-        return leagues;
+        return team;
     }
 
-    public LeagueTable getLeagueTable()
+    public void getTeam(TeamAPI _api, final boolean initialLoad, final TeamContract.View mView, final TeamRepository teamRepository, String id)
     {
-        return leagueTable;
-    }
-
-    public void getLeagueTable(LeagueAPI _api, final boolean initialLoad, final LeagueContract.View mView, final LeagueRepository leagueRepository, String id)
-    {
-        _subscriptions.add(_api.getLeagueTable(id)
+        _subscriptions.add(_api.getTeam(id)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(15000, TimeUnit.MILLISECONDS)
                 .retry()
                 .distinct()
-                .subscribe(new Observer<LeagueTable>() {
+                .subscribe(new Observer<Team>() {
                     @Override
                     public void onError(Throwable e) {
                         Log.i("Retrofit", "Error");
@@ -60,16 +53,16 @@ public class RemoteLeagueSource {
                             leagueRepository.getLocalSource().addData(leagues);
                         }
                         else {*/
-                        Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
-                            mView.setAdapters(leagueTable, true);
-                            mView.showDialog();
+                        //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
+                            //mView.setAdapters(leagueTable, true);
+                            //mView.showDialog();
                         //}
                     }
                     @Override
-                    public void onNext(LeagueTable leagueT) {
+                    public void onNext(Team team2) {
                         Log.i("Retrofit", "onNext");
 
-                        leagueTable = leagueT;
+                        team = team2;
                     }
                 }));
     }

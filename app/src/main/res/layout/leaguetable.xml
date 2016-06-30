@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="League Name"
+        android:id="@+id/ltLeagueName"
+        android:allowUndo="false"
+        android:paddingBottom="@dimen/_5sdp"/>
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal" android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp">
+                <TextView
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="#"
+                    android:gravity="center"
+                    android:layout_width="@dimen/_20sdp" />
+                <TextView
+                    android:layout_width="@dimen/_235sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Team Name"
+                    
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="GP"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="P"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="GD"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="GF"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="GA"
+                    
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="W"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="D"
+                    
+                    android:gravity="center" />
+                <TextView
+                    android:layout_width="@dimen/_29sdp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="L"
+                    
+                    android:gravity="center" />
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/leagueTable"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                tools:context=".MainActivity"
+                android:clickable="true"
+                android:visibility="visible"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+</LinearLayout>
