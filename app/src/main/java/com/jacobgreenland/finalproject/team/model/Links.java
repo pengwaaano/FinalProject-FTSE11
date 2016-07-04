@@ -3,10 +3,12 @@ package com.jacobgreenland.finalproject.team.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Jacob on 30/06/16.
  */
-public class Links {
+public class Links extends RealmObject {
 
     @SerializedName("fixtures")
     @Expose

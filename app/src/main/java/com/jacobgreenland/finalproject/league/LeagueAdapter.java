@@ -18,6 +18,7 @@ import com.jacobgreenland.finalproject.MainActivity;
 import com.jacobgreenland.finalproject.R;
 import com.jacobgreenland.finalproject.league.model.Standing;
 import com.jacobgreenland.finalproject.team.TeamTabs;
+import com.jacobgreenland.finalproject.team.model.Team;
 
 import java.util.List;
 
@@ -30,18 +31,20 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
     private int rowLayout;
     private Context mContext;
     private boolean landscape;
+    LeagueRepository leagueR;
     TeamTabs mFragment;
 
     private CompositeSubscription _subscriptions = new CompositeSubscription();
     private ProgressDialog pDialog;
 
 
-    public LeagueAdapter(List<Standing> r, int rowLayout, Context context, boolean landscape) {
+    public LeagueAdapter(List<Standing> r, int rowLayout, Context context, boolean landscape, LeagueRepository leagueRepo) {
 
         this.Standings = r;
         this.rowLayout = rowLayout;
         this.mContext = context;
         this.landscape = landscape;
+        this.leagueR = leagueRepo;
         notifyDataSetChanged();
     }
 
@@ -52,7 +55,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         final Standing standing = Standings.get(i);
 
         Log.d("test", ""+ Standings.size());
@@ -78,6 +81,22 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
             @Override
             public void onClick(View view, int position) {
                 //MainActivity.chosenSong = Result;
+                String team = standing.getLinks().getTeamLink().getHref();
+                MainActivity.chosenTeam = team.substring(32,team.length());
+
+                //Team chosen = new Team();
+                for(Team t : MainActivity.loadedLeagueTeams)
+                {
+                    Log.d("test", t.getName() + " " + standing.getTeamName());
+                    if(t.getName().equals(standing.getTeamName()))
+                    {
+
+                        MainActivity.chosenTeamObject = t;
+                    }
+                }
+                //MainActivity.chosenTeamObject = MainActivity.loadedLeagueTeams.get(i);
+                MainActivity.chosenTeamPosition = standing.getPosition();
+                    Log.d("test", MainActivity.chosenTeam);
                     fragmentJump(view);
                     //((MyApp) mContext.getApplicationContext()).getApiComponent().inject((MainActivity) mContext);
                     //Toast.makeText(mContext, "#" + position + " - " + Result.getTrackName(), Toast.LENGTH_SHORT).show();

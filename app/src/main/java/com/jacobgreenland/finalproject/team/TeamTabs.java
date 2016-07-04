@@ -19,7 +19,7 @@ import butterknife.Unbinder;
 /**
  * Created by Jacob on 11/06/16.
  */
-public class TeamTabs extends Fragment
+public class TeamTabs extends Fragment implements Communicator
 {
     @BindView(R.id.pager)
     ViewPager pager;
@@ -42,7 +42,6 @@ public class TeamTabs extends Fragment
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
         //getActivity().getFragmentManager();
-        comm = (Communicator) getActivity();
 
         //set adapters and pagers for the Tab Screen
         adapter =  new ViewPagerAdapter(getChildFragmentManager(),Titles,Numboftabs);
@@ -62,7 +61,6 @@ public class TeamTabs extends Fragment
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-
         Log.d("test", "Adapter should have been set by now!");
     }
 
@@ -71,4 +69,18 @@ public class TeamTabs extends Fragment
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    @Override
+    public void initialiseNavigationDrawer() {
+
+    }
+
+    @Override
+    public void loadMoreTabs()
+    {
+        Log.d("test", "loading more tabs");
+        //pager.setAdapter(adapter);
+        //tabs.setViewPager2(pager);
+    }
+
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="@dimen/_40sdp"
+    android:layout_margin="5dp"
+    card_view:cardElevation="10dp"
+    card_view:cardCornerRadius="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_10sdp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="1."
+            android:id="@+id/pNumber"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textSize="16sp"
+            android:paddingEnd="@dimen/_10sdp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Player Name"
+            android:id="@+id/pName"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_alignBottom="@+id/pNumber"
+            android:layout_toRightOf="@+id/pNumber"
+            android:layout_toEndOf="@+id/pNumber" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

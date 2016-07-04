@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="@dimen/_40sdp"
+    android:layout_margin="5dp"
+    card_view:cardElevation="10dp"
+    card_view:cardCornerRadius="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_10sdp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Large Text"
+                android:id="@+id/fHomeTeam"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:textSize="16sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="v"
+            android:id="@+id/vs"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Large Text"
+                android:id="@+id/fAwayTeam"
+                android:layout_alignParentEnd="true"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

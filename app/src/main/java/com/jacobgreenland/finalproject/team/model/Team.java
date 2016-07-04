@@ -3,15 +3,19 @@ package com.jacobgreenland.finalproject.team.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Jacob on 30/06/16.
  */
-public class Team {
+public class Team extends RealmObject {
 
     @SerializedName("_links")
     @Expose
     private Links links;
     @SerializedName("name")
+    @PrimaryKey
     @Expose
     private String name;
     @SerializedName("code")

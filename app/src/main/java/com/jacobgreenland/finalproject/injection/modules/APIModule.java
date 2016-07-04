@@ -11,10 +11,10 @@ import retrofit.RestAdapter;
 @Module
 public class APIModule {
 
-
     @UserScope
     @Provides
-    public LeagueAPI providesItemsInterface(RestAdapter retrofit) {
+    public LeagueAPI providesItemsInterface(RestAdapter retrofit)
+    {
         return retrofit.create(LeagueAPI.class);
     }
 }

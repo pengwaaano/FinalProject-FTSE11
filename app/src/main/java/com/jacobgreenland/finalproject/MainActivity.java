@@ -17,11 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.jacobgreenland.finalproject.league.model.League;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
 import com.jacobgreenland.finalproject.league.LeagueFragment;
-import com.jacobgreenland.finalproject.league.LeagueRepository;
+import com.jacobgreenland.finalproject.league.model.League;
+import com.jacobgreenland.finalproject.league.model.LeagueTable;
+import com.jacobgreenland.finalproject.team.TeamTabs;
+import com.jacobgreenland.finalproject.team.model.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,11 +38,15 @@ public class MainActivity extends AppCompatActivity
     @Inject
     public static LeagueAPI _api;
 
-    public static LeagueRepository leagueRepository;
 
     public static String chosenLeague;
     public static String chosenLeagueID;
     public static String chosenTeam;
+    public static String chosenFixtures;
+    public static int chosenTeamPosition;
+    public static Team chosenTeamObject;
+    public static LeagueTable chosenLeagueObject;
+    public static List<Team> loadedLeagueTeams = new ArrayList<Team>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,8 +57,6 @@ public class MainActivity extends AppCompatActivity
         initialiseToolbar();
 
         ((MyApp) getApplication()).getApiComponent().inject(this);
-
-        leagueRepository = new LeagueRepository(getApplicationContext());
 
         MainFragment lF = new MainFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -192,8 +197,18 @@ public class MainActivity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(id, fragment, fragment.toString());
+        if(fragment instanceof TeamTabs)
+        {
+            ft.replace(id, fragment, "tabs");
+        }
+        else
+            ft.replace(id, fragment, fragment.toString());
         ft.addToBackStack(null);
         ft.commit();
+    }
+    @Override
+    public void loadMoreTabs()
+    {
+        Log.d("test", "main load more tabs :(");
     }
 }

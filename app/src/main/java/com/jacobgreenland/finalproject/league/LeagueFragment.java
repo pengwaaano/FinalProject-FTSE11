@@ -16,6 +16,12 @@ import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
 import com.jacobgreenland.finalproject.Communicator;
 import com.jacobgreenland.finalproject.MainActivity;
 import com.jacobgreenland.finalproject.R;
+import com.jacobgreenland.finalproject.league.model.LeagueTable;
+import com.jacobgreenland.finalproject.league.model.Standing;
+import com.jacobgreenland.finalproject.services.Services;
+import com.jacobgreenland.finalproject.team.TeamAPI;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jacob on 28/06/16.
@@ -29,6 +35,8 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     TextView leagueName;
     RecyclerViewHeader header;
     LeagueAdapter leagueAdapter;
+    TeamAPI _teamapi;
+    LeagueTable lT;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -36,7 +44,7 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
         v =inflater.inflate(R.layout.leaguetable,container,false);
         setRetainInstance(true);
         comm = (Communicator) getActivity();
-
+        _teamapi = Services._createTeamAPI();
         return v;
     }
 
@@ -52,8 +60,14 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
 
         //header.attachTo(rv);
 
-        fPresenter = new LeaguePresenter(this, MainActivity.leagueRepository);
-        fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
+        fPresenter = new LeaguePresenter(this, new LeagueRepository(getActivity().getApplicationContext()));
+        if(fPresenter.getRepo().getLocalSource().isRealmEmpty(MainActivity.chosenLeague)) {
+            fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
+        }
+        else
+        {
+            fPresenter.loadLocalLeagueTable(MainActivity.chosenLeague);
+        }
     }
 
     @Override
@@ -63,12 +77,27 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
 
     @Override
     public void setAdapters(LeagueTable leagueTable, boolean fromAPI) {
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerow, v.getContext(), false);
+        lT = leagueTable;
+        if(fPresenter.getRepo().getLocalSource().isTeamRealmEmpty()) {
+            ArrayList<String> ids = new ArrayList<>();
+            for(Standing t : leagueTable.getStanding())
+            {
+                ids.add(t.getLinks().getTeamLink().getHref().substring(32,t.getLinks().getTeamLink().getHref().length()));
+            }
+            fPresenter.loadTeamsOfLeague(_teamapi, false, ids);
+        }
         else
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true);
-            rv.setAdapter(leagueAdapter);
-            leagueAdapter.notifyDataSetChanged();
+            fPresenter.loadLocalLeagueTeams();
+    }
+    @Override
+    public void setLeagueAdapters()
+    {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            leagueAdapter = new LeagueAdapter(lT.getStanding(), R.layout.leaguetablerow, v.getContext(), false, fPresenter.getRepo());
+        else
+            leagueAdapter = new LeagueAdapter(lT.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true,fPresenter.getRepo());
+        rv.setAdapter(leagueAdapter);
+        leagueAdapter.notifyDataSetChanged();
     }
 
     @Override

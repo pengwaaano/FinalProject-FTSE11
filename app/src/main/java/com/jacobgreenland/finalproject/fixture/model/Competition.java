@@ -1,32 +1,30 @@
-package com.jacobgreenland.finalproject.team.model;
 
+package com.jacobgreenland.finalproject.fixture.model;
+
+import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-
-/**
- * Created by Jacob on 30/06/16.
- */
-public class Players extends RealmObject {
+@Generated("org.jsonschema2pojo")
+public class Competition {
 
     @SerializedName("href")
     @Expose
     private String href;
 
     /**
-     *
+     * 
      * @return
-     * The href
+     *     The href
      */
     public String getHref() {
         return href;
     }
 
     /**
-     *
+     * 
      * @param href
-     * The href
+     *     The href
      */
     public void setHref(String href) {
         this.href = href;

@@ -1,18 +1,19 @@
-package com.jacobgreenland.finalproject.league;
+package com.jacobgreenland.finalproject.league.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.jacobgreenland.finalproject.league.model.Standing;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Generated;
 
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 @Generated("org.jsonschema2pojo")
-public class LeagueTable {
+public class LeagueTable extends RealmObject {
 
     @SerializedName("leagueCaption")
+    @PrimaryKey
     @Expose
     private String leagueCaption;
     @SerializedName("matchday")
@@ -20,7 +21,7 @@ public class LeagueTable {
     private Integer matchday;
     @SerializedName("standing")
     @Expose
-    private List<Standing> standing = new ArrayList<Standing>();
+    private RealmList<Standing> standing = new RealmList<Standing>();
 
     /**
      *
@@ -63,7 +64,7 @@ public class LeagueTable {
      * @return
      * The standing
      */
-    public List<Standing> getStanding() {
+    public RealmList<Standing> getStanding() {
         return standing;
     }
 
@@ -72,7 +73,7 @@ public class LeagueTable {
      * @param standing
      * The standing
      */
-    public void setStanding(List<Standing> standing) {
+    public void setStanding(RealmList<Standing> standing) {
         this.standing = standing;
     }
 

@@ -127,6 +127,15 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    /*public void setViewPager2(ViewPager viewPager) {
+        mTabStrip.removeAllViews();
+
+        mViewPager = viewPager;
+        if (viewPager != null) {
+            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            populateTabStrip2();
+        }
+    }*/
     /**
      * Create a default view to be used for tabs. This is called if a custom tab view is not set via
      * {@link #setCustomTabView(int, int)}.
@@ -196,6 +205,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             tabTitleView.setTextSize(14);
         }
     }
+
 
     public void setContentDescription(int i, String desc) {
         mContentDescriptions.put(i, desc);

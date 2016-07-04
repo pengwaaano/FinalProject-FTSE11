@@ -3,11 +3,13 @@ package com.jacobgreenland.finalproject.league.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Jacob on 30/06/16.
  */
 
-public class Links_ {
+public class Links_ extends RealmObject {
 
     @SerializedName("team")
     @Expose

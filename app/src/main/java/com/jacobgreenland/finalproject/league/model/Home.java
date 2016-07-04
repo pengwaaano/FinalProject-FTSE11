@@ -3,10 +3,12 @@ package com.jacobgreenland.finalproject.league.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Jacob on 29/06/16.
  */
-public class Home {
+public class Home extends RealmObject {
     @SerializedName("goals")
     @Expose
     private Integer goals;

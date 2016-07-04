@@ -1,6 +1,7 @@
 package com.jacobgreenland.finalproject.league;
 
-import com.jacobgreenland.finalproject.league.model.League;
+import com.jacobgreenland.finalproject.team.TeamAPI;
+import com.jacobgreenland.finalproject.team.model.Team;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class LeaguePresenter implements LeagueContract.Presenter {
 
     private CompositeSubscription _subscriptions = new CompositeSubscription();
 
-    List<League> results;
+    List<Team> teams;
     int i = 0;
 
     @Inject
@@ -36,7 +37,29 @@ public class LeaguePresenter implements LeagueContract.Presenter {
     @Override
     public void loadLeagueTable(LeagueAPI _api, final boolean initialLoad, String id)
     {
-        leagueRepository.getRemoteSource().getLeagueTable(_api, initialLoad, mView, leagueRepository, id);
+        leagueRepository.getRemoteSource().getLeagueTable(_api, mView, leagueRepository, id);
+    }
+
+    @Override
+    public void loadTeamsOfLeague(TeamAPI _api, final boolean initialLoad, List<String> id)
+    {
+        leagueRepository.getRemoteSource().getTeamsOfLeague(_api, initialLoad, mView, leagueRepository, id);
+    }
+
+    @Override
+    public void loadLocalLeagueTable(String leagueTable) {
+
+        leagueRepository.getLocalSource().getDataFromLocal(leagueTable, mView);
+    }
+    @Override
+    public void loadLocalLeagueTeams() {
+
+        leagueRepository.getLocalSource().getTeamDataFromLocal(mView);
+    }
+
+    public LeagueRepository getRepo()
+    {
+        return leagueRepository;
     }
 
     @Inject

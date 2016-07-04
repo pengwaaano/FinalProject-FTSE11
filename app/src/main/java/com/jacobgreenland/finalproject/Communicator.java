@@ -5,4 +5,5 @@ package com.jacobgreenland.finalproject;
  */
 public interface Communicator {
     public void initialiseNavigationDrawer();
+    public void loadMoreTabs();
 }

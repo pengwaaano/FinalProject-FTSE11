@@ -3,11 +3,17 @@ package com.jacobgreenland.finalproject.league.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Jacob on 29/06/16.
  */
 
-public class Standing {
+public class Standing extends RealmObject{
+
+        @SerializedName("_links")
+        @Expose
+        private Links_ links;
         @SerializedName("position")
         @Expose
         private Integer position;
@@ -47,6 +53,24 @@ public class Standing {
         @SerializedName("away")
         @Expose
         private Away away;
+
+        /**
+         *
+         * @return
+         * The links
+         */
+        public Links_ getLinks() {
+                return links;
+        }
+
+        /**
+         *
+         * @param links
+         * The _links
+         */
+        public void setLinks(Links_ links) {
+                this.links = links;
+        }
 
         /**
          *
