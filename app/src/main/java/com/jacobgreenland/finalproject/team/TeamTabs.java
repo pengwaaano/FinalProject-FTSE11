@@ -19,7 +19,7 @@ import butterknife.Unbinder;
 /**
  * Created by Jacob on 11/06/16.
  */
-public class TeamTabs extends Fragment implements Communicator
+public class TeamTabs extends Fragment
 {
     @BindView(R.id.pager)
     ViewPager pager;
@@ -69,18 +69,4 @@ public class TeamTabs extends Fragment implements Communicator
         super.onDestroyView();
         unbinder.unbind();
     }
-
-    @Override
-    public void initialiseNavigationDrawer() {
-
-    }
-
-    @Override
-    public void loadMoreTabs()
-    {
-        Log.d("test", "loading more tabs");
-        //pager.setAdapter(adapter);
-        //tabs.setViewPager2(pager);
-    }
-
 }

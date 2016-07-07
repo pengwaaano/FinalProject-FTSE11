@@ -6,9 +6,14 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
 
-@Generated("org.jsonschema2pojo")
-public class Fixture {
+import io.realm.RealmObject;
 
+@Generated("org.jsonschema2pojo")
+public class Fixture extends RealmObject {
+
+    @SerializedName("_links")
+    @Expose
+    private Links_ links;
     @SerializedName("date")
     @Expose
     private String date;
@@ -29,7 +34,25 @@ public class Fixture {
     private Result result;
 
     /**
-     * 
+     *
+     * @return
+     *     The links
+     */
+    public Links_ getLinks() {
+        return links;
+    }
+
+    /**
+     *
+     * @param links
+     *     The _links
+     */
+    public void setLinks(Links_ links) {
+        this.links = links;
+    }
+
+    /**
+     *
      * @return
      *     The date
      */
@@ -38,7 +61,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param date
      *     The date
      */
@@ -47,7 +70,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @return
      *     The status
      */
@@ -56,7 +79,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param status
      *     The status
      */
@@ -65,7 +88,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @return
      *     The matchday
      */
@@ -74,7 +97,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param matchday
      *     The matchday
      */
@@ -83,7 +106,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @return
      *     The homeTeamName
      */
@@ -92,7 +115,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param homeTeamName
      *     The homeTeamName
      */
@@ -101,7 +124,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @return
      *     The awayTeamName
      */
@@ -110,7 +133,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param awayTeamName
      *     The awayTeamName
      */
@@ -119,7 +142,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @return
      *     The result
      */
@@ -128,7 +151,7 @@ public class Fixture {
     }
 
     /**
-     * 
+     *
      * @param result
      *     The result
      */

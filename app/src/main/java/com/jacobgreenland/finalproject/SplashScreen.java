@@ -7,14 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ProgressBar;
 
-import com.jacobgreenland.finalproject.league.model.League;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
+import com.jacobgreenland.finalproject.league.model.League;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -32,6 +35,10 @@ public class SplashScreen extends AppCompatActivity
     private CompositeSubscription _subscriptions = new CompositeSubscription();
     private ProgressDialog pDialog;
 
+
+    RealmConfiguration realmConfig;
+    public static Realm realm;
+
     ProgressBar pb;
 
     @Override
@@ -40,12 +47,31 @@ public class SplashScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
 
+        realmConfig = new RealmConfiguration.Builder(this).deleteRealmIfMigrationNeeded().build();
+        Realm.setDefaultConfiguration(realmConfig);
+
+
+        realm = Realm.getDefaultInstance();
+
+        realm.beginTransaction();
+        Realm.getDefaultInstance().deleteAll();
+        realm.commitTransaction();
+
         ((MyApp) getApplication()).getApiComponent().inject(this);
 
         //_api = Services._createItemAPI();
-        pattern();
+        if(realm.isEmpty())
+            pattern();
+        else {
+            MainActivity.leagues = loadFromRealm();
+            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         pb = (ProgressBar) findViewById(R.id.splashProgress);
+
+
     }
 
     public void pattern() {
@@ -66,8 +92,11 @@ public class SplashScreen extends AppCompatActivity
                         Log.i("Retrofit", "onCompleted");
                         /*if(initialLoad) {
                             leagueRepository.getLocalSource().addData(leagues);
+
                         }
                         else {*/
+                        //for(League l : leagues) {
+                        addToRealm(MainActivity.leagues);
                         Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -82,6 +111,24 @@ public class SplashScreen extends AppCompatActivity
                     }
                 }));
 
+    }
+
+    private void addToRealm(final List<League> leagues)
+    {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for(League l : leagues) {
+                    final League finalLeague = realm.copyToRealmOrUpdate(l);
+                }
+            }
+        });
+    }
+    private List<League> loadFromRealm()
+    {
+        RealmResults<League> result2 = realm.where(League.class)
+                .findAll();
+        return result2;
     }
     private void hidePDialog()
     {

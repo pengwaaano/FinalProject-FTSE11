@@ -1,13 +1,15 @@
 
-package com.jacobgreenland.finalproject.player.model;
+package com.jacobgreenland.finalproject.fixture.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
 
+import io.realm.RealmObject;
+
 @Generated("org.jsonschema2pojo")
-public class Team {
+public class HomeTeam extends RealmObject {
 
     @SerializedName("href")
     @Expose

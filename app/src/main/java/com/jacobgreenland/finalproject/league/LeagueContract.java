@@ -20,9 +20,9 @@ public interface LeagueContract {
 
     interface Presenter extends BasePresenter {
         void loadLeagueTable(LeagueAPI _api, final boolean initialLoad, String id);
-        void loadTeamsOfLeague(TeamAPI _api, final boolean initialLoad, List<String> id);
+        void loadTeamsOfLeague(TeamAPI _api, final boolean initialLoad, List<String> id, String s);
         void loadLocalLeagueTable(String leagueTable);
-        void loadLocalLeagueTeams();
+        void loadLocalLeagueTeams(String l);
         //void loadLocalPopSongs();
         //LeagueRepository getRepository();
         //void setRepository(LeagueRepository songRepo);

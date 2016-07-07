@@ -1,16 +1,20 @@
 
 package com.jacobgreenland.finalproject.player.model;
 
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jacobgreenland.finalproject.team.model.Team;
+
+import javax.annotation.Generated;
+
+import io.realm.RealmObject;
 
 @Generated("org.jsonschema2pojo")
-public class Links {
+public class PlayerLinks extends RealmObject {
 
     @SerializedName("self")
     @Expose
-    private Self self;
+    private PlayerSelf self;
     @SerializedName("team")
     @Expose
     private Team team;
@@ -20,7 +24,7 @@ public class Links {
      * @return
      *     The self
      */
-    public Self getSelf() {
+    public PlayerSelf getSelf() {
         return self;
     }
 
@@ -29,7 +33,7 @@ public class Links {
      * @param self
      *     The self
      */
-    public void setSelf(Self self) {
+    public void setSelf(PlayerSelf self) {
         this.self = self;
     }
 

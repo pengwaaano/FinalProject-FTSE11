@@ -13,7 +13,7 @@ public class Standing extends RealmObject{
 
         @SerializedName("_links")
         @Expose
-        private Links_ links;
+        private LeagueLinks links;
         @SerializedName("position")
         @Expose
         private Integer position;
@@ -59,7 +59,7 @@ public class Standing extends RealmObject{
          * @return
          * The links
          */
-        public Links_ getLinks() {
+        public LeagueLinks getLinks() {
                 return links;
         }
 
@@ -68,7 +68,7 @@ public class Standing extends RealmObject{
          * @param links
          * The _links
          */
-        public void setLinks(Links_ links) {
+        public void setLinks(LeagueLinks links) {
                 this.links = links;
         }
 

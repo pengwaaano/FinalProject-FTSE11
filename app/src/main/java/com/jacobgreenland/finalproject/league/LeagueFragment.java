@@ -4,9 +4,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     LeagueAdapter leagueAdapter;
     TeamAPI _teamapi;
     LeagueTable lT;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -45,6 +48,9 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
         setRetainInstance(true);
         comm = (Communicator) getActivity();
         _teamapi = Services._createTeamAPI();
+
+        Log.d("LeagueFragment", "League fragment loaded again and again");
+
         return v;
     }
 
@@ -61,14 +67,48 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
         //header.attachTo(rv);
 
         fPresenter = new LeaguePresenter(this, new LeagueRepository(getActivity().getApplicationContext()));
-        if(fPresenter.getRepo().getLocalSource().isRealmEmpty(MainActivity.chosenLeague)) {
+        Log.d("Test", "LeagueTable loaded");
+        if(fPresenter.getRepo().getLocalSource().isRealmEmpty(MainActivity.chosenLeague))
+        {
             fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
         }
         else
         {
             fPresenter.loadLocalLeagueTable(MainActivity.chosenLeague);
         }
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //if (MainActivity.isOnline)
+                fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
+                /*else {
+                    Snackbar.make(v.findViewById(R.id.snackbarPosition), "No Internet Connection", Snackbar.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }*/
+            }
+        });
     }
+
+    /*@Override
+    public void onResume()
+    {
+        super.onResume();
+        if(MainActivity.chosenLeagueObject != null) {
+            if (fPresenter.getRepo().getLocalSource().isTeamRealmEmpty()) {
+                ArrayList<String> ids = new ArrayList<>();
+                for (Standing t : MainActivity.chosenLeagueObject.getStanding()) {
+                    ids.add(t.getLinks().getTeamLink().getHref().substring(32, t.getLinks().getTeamLink().getHref().length()));
+                }
+                fPresenter.loadTeamsOfLeague(_teamapi, false, ids, MainActivity.chosenLeagueObject.getLeagueCaption());
+            } else {
+                Log.d("test", "boo " + MainActivity.chosenLeagueObject.getLeagueCaption());
+                fPresenter.loadLocalLeagueTeams(MainActivity.chosenLeagueObject.getLeagueCaption());
+            }
+        }
+    }*/
 
     @Override
     public void setPresenter(LeagueContract.Presenter presenter) {
@@ -78,24 +118,27 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     @Override
     public void setAdapters(LeagueTable leagueTable, boolean fromAPI) {
         lT = leagueTable;
-        if(fPresenter.getRepo().getLocalSource().isTeamRealmEmpty()) {
+
+        if(fPresenter.getRepo().getLocalSource().isTeamRealmEmpty(lT.getLeagueCaption())) {
             ArrayList<String> ids = new ArrayList<>();
             for(Standing t : leagueTable.getStanding())
             {
                 ids.add(t.getLinks().getTeamLink().getHref().substring(32,t.getLinks().getTeamLink().getHref().length()));
             }
-            fPresenter.loadTeamsOfLeague(_teamapi, false, ids);
+            fPresenter.loadTeamsOfLeague(_teamapi, false, ids, lT.getLeagueCaption());
         }
-        else
-            fPresenter.loadLocalLeagueTeams();
+        else {
+            Log.d("test","boo " + lT.getLeagueCaption());
+            fPresenter.loadLocalLeagueTeams(lT.getLeagueCaption());
+        }
     }
     @Override
     public void setLeagueAdapters()
     {
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            leagueAdapter = new LeagueAdapter(lT.getStanding(), R.layout.leaguetablerow, v.getContext(), false, fPresenter.getRepo());
+            leagueAdapter = new LeagueAdapter(MainActivity.chosenLeagueObject.getStanding(), R.layout.leaguetablerow, v.getContext(), false, fPresenter.getRepo());
         else
-            leagueAdapter = new LeagueAdapter(lT.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true,fPresenter.getRepo());
+            leagueAdapter = new LeagueAdapter(MainActivity.chosenLeagueObject.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true,fPresenter.getRepo());
         rv.setAdapter(leagueAdapter);
         leagueAdapter.notifyDataSetChanged();
     }
@@ -104,7 +147,7 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     public void showDialog() {
         //comm.initialiseNavigationDrawer();
         leagueName.setText(MainActivity.chosenLeague);
-
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

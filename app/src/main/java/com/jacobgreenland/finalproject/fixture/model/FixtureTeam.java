@@ -9,7 +9,7 @@ import javax.annotation.Generated;
 import io.realm.RealmObject;
 
 @Generated("org.jsonschema2pojo")
-public class Competition extends RealmObject {
+public class FixtureTeam extends RealmObject{
 
     @SerializedName("href")
     @Expose

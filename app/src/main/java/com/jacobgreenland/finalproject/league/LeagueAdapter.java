@@ -58,7 +58,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         final Standing standing = Standings.get(i);
 
-        Log.d("test", ""+ Standings.size());
+        //Log.d("test", ""+ Standings.size());
 
         viewHolder.TeamPosition.setText(standing.getPosition().toString() + ".");
         viewHolder.TeamGamesPlayed.setText(standing.getPlayedGames().toString());
@@ -72,7 +72,6 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
             viewHolder.TeamLosses.setText(standing.getLosses().toString());
         }
 
-
         viewHolder.TeamName.setText(standing.getTeamName());
         /*Picasso.with(mContext)
                 .load(Result.getArtworkUrl100())
@@ -85,19 +84,21 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
                 MainActivity.chosenTeam = team.substring(32,team.length());
 
                 //Team chosen = new Team();
+                Log.d("test", MainActivity.loadedLeagueTeams.size() + "");
                 for(Team t : MainActivity.loadedLeagueTeams)
                 {
-                    Log.d("test", t.getName() + " " + standing.getTeamName());
-                    if(t.getName().equals(standing.getTeamName()))
-                    {
-
-                        MainActivity.chosenTeamObject = t;
+                    if(t.getName() != null) {
+                        //Log.d("test", t.getName());
+                        Log.d("test", t.getName() + " " + standing.getTeamName());
+                        if (t.getName().equals(standing.getTeamName())) {
+                            MainActivity.chosenTeamObject = t;
+                            MainActivity.chosenTeamPosition = standing.getPosition();
+                            Log.d("test", MainActivity.chosenTeam);
+                            fragmentJump(view);
+                        }
                     }
                 }
                 //MainActivity.chosenTeamObject = MainActivity.loadedLeagueTeams.get(i);
-                MainActivity.chosenTeamPosition = standing.getPosition();
-                    Log.d("test", MainActivity.chosenTeam);
-                    fragmentJump(view);
                     //((MyApp) mContext.getApplicationContext()).getApiComponent().inject((MainActivity) mContext);
                     //Toast.makeText(mContext, "#" + position + " - " + Result.getTrackName(), Toast.LENGTH_SHORT).show();
             }
@@ -136,7 +137,8 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
         return Standings == null ? 0 : Standings.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
+    {
         //@BindView(R.id.teamName)
         TextView TeamName;
         TextView TeamPosition;
@@ -171,7 +173,6 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
             itemView.setTag(itemView);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-
         }
         public void setClickListener(ItemClickListener itemClickListener) {
             this.clickListener = itemClickListener;

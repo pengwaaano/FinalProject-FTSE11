@@ -75,13 +75,15 @@ public class RemoteLeagueSource {
                     public void onNext(LeagueTable leagueT) {
                         Log.i("Retrofit", "onNext");
 
+                        Log.d("test", leagueT.getLeagueCaption() + "Sansa");
                         leagueTable = leagueT;
                         MainActivity.chosenLeagueObject = leagueT;
                     }
                 }));
     }
-    public void getTeamsOfLeague(TeamAPI _api, final boolean initialLoad, final LeagueContract.View mView, final LeagueRepository leagueRepository, List<String> id)
+    public void getTeamsOfLeague(TeamAPI _api, final boolean initialLoad, final LeagueContract.View mView, final LeagueRepository leagueRepository, List<String> id, String league)
     {
+        leagueTeams = new ArrayList<Team>();
         for(String s : id) {
             _subscriptions.add(_api.getTeamsOfLeague(s)
                     .subscribeOn(Schedulers.newThread())
@@ -104,8 +106,10 @@ public class RemoteLeagueSource {
                         else {*/
                             //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
                             leagueRepository.getLocalSource().addLeagueTeamData(leagueTeams);
+                            MainActivity.loadedLeagueTeams = new ArrayList<Team>();
                             MainActivity.loadedLeagueTeams = leagueTeams;
                             mView.setLeagueAdapters();
+                            Log.i("test", "load league teams");
                             //mView.setAdapters(leagueTable, true);
                             //mView.showDialog();
                             //}
@@ -116,7 +120,6 @@ public class RemoteLeagueSource {
                             Log.i("Retrofit", "onNext");
 
                             Log.d("test", team.getName());
-
                             leagueTeams.add(team);
                             //MainActivity.chosenLeagueObject = leagueT;
                         }

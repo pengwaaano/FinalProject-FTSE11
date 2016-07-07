@@ -1,5 +1,6 @@
 package com.jacobgreenland.finalproject.team;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,19 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.caverock.androidsvg.SVG;
 import com.jacobgreenland.finalproject.Communicator;
+import com.jacobgreenland.finalproject.HttpImageRequestTask;
+import com.jacobgreenland.finalproject.ImageCacheUtil;
 import com.jacobgreenland.finalproject.MainActivity;
 import com.jacobgreenland.finalproject.R;
 import com.jacobgreenland.finalproject.fixture.model.Fixture;
 import com.jacobgreenland.finalproject.player.model.Player;
 import com.jacobgreenland.finalproject.services.Services;
 import com.jacobgreenland.finalproject.team.model.Team;
-import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.util.List;
@@ -37,7 +41,8 @@ import butterknife.Unbinder;
 public class Tab1 extends Fragment implements TeamContract.View{
 
     Communicator comm;
-    @BindView(R.id.clubBadge) ImageView badge;
+    @BindView(R.id.clubBadge)
+    ImageView badge;
     @BindView(R.id.tTeamName) TextView name;
     @BindView(R.id.tPosition) TextView position;
     @BindView(R.id.tLeague) TextView league;
@@ -70,11 +75,44 @@ public class Tab1 extends Fragment implements TeamContract.View{
         super.onActivityCreated(savedInstanceState);
         _teamapi = Services._createTeamAPI();
 
-        Log.d("test", MainActivity.chosenTeamObject.getCrestUrl());
+        //Log.d("test", MainActivity.chosenTeamObject.getCrestUrl());
 
-        Picasso.with(v.getContext())
+        /*Picasso.with(v.getContext())
                 .load(Uri.parse(MainActivity.chosenTeamObject.getCrestUrl()))
-                .into(badge);
+                .into(badge);*/
+        if (!MainActivity.chosenTeamObject.getCrestUrl().isEmpty()) {
+            Log.d("testtesttest", MainActivity.chosenTeamObject.getCrestUrl());
+
+            ImageCacheUtil imageCacheUtil = ImageCacheUtil.getInstance(v.getContext());
+
+            //we somehow get the filename replacing the end point with nothing and the file extension
+            String filename = MainActivity.chosenTeamObject.getCrestUrl().replace("https://upload.wikimedia.org/wikipedia/commons/", "")
+            .substring(5,MainActivity.chosenTeamObject.getCrestUrl().length()-1)
+            .replace(".svg", ".png");
+
+            //first we try getting the image from local saved images
+            if (imageCacheUtil.getImageFromFile(badge, filename)) {
+                badge.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                //holder.progressBar.setVisibility(View.GONE);
+            } else {
+                //if we haven't saved the image previously, we try getting it from our cache system.
+                //If we fail, we download it from the URL provided
+                Bitmap image = imageCacheUtil.getImage(MainActivity.chosenTeamObject.getCrestUrl());
+
+                if (image != null) {
+                    badge.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    badge.setImageBitmap(image);
+                    //holder.progressBar.setVisibility(View.GONE);
+                } else {
+                    new HttpImageRequestTask(v.getContext(), badge).execute(MainActivity.chosenTeamObject.getCrestUrl());
+                }
+            }
+        } else {
+            //sort of placeholder if the item doesn't have a image URL
+            badge.setImageResource(R.drawable.pannamatch);
+        }
+
+        //
 
         favourite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -90,7 +128,6 @@ public class Tab1 extends Fragment implements TeamContract.View{
         Log.d("test", "Adapter should have been set by now!");
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -104,48 +141,21 @@ public class Tab1 extends Fragment implements TeamContract.View{
     @Override
     public void setTeam(Team team, boolean fromAPI) {
 
-        comm = (Communicator) getActivity().getSupportFragmentManager().findFragmentByTag("tabs");
-
-        MainActivity.chosenTeamObject = team;
-        //comm.loadMoreTabs();
-
-        /*String players = team.getLinks().getPlayers().getHref();
-        ttabs.fPresenter.loadPlayers(_teamapi, false, players.substring(32,players.length()));
-        String fixtures = MainActivity.chosenTeamObject.getLinks().getFixtures().getHref();
-        ttabs.fPresenter.loadFixtures(_teamapi, false, fixtures.substring(32,fixtures.length()));
-
-        /*if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerow, v.getContext(), false);
-        else
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true);
-        rv.setAdapter(leagueAdapter);
-        leagueAdapter.notifyDataSetChanged();*/
     }
 
     @Override
     public void setFixtureAdapter(List<Fixture> fixtures) {
-        //Tab3 t3 = (Tab3) getActivity().getSupportFragmentManager().findFragmentByTag("Tab3");
-        //t3.setFixtureAdapter(ttabs.fPresenter.getRepo().getRemoteSource().getFixtures());
+
     }
 
     @Override
     public void setPlayerAdapter(List<Player> players) {
-        //Tab2 t2 = (Tab2) getActivity().getSupportFragmentManager().findFragmentByTag("Tab2");
-        //t2.setPlayerAdapter(ttabs.fPresenter.getRepo().getRemoteSource().getPlayers());
+
     }
 
     @Override
     public void showDialog() {
-        //comm.initialiseNavigationDrawer();
-        //leagueName.setText(MainActivity.chosenLeague);
 
-        Log.d("test", "set photoooooo");
-
-        //comm.loadMoreTabs();
-
-        /*String players = MainActivity.chosenTeamObject.getLinks().getPlayers().getHref();
-
-        fPresenter.loadPlayers(_teamapi, false, players.substring(32,players.length()));*/
     }
     String getDayOfMonthSuffix(final int n)
     {
@@ -166,5 +176,12 @@ public class Tab1 extends Fragment implements TeamContract.View{
             favourite.setImageResource(R.drawable.favouriteunchecked);
             favouriteBool = false;
         }
+    }
+}
+class MyWebViewClient extends WebViewClient {
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        view.loadUrl(url);
+        return true;
     }
 }

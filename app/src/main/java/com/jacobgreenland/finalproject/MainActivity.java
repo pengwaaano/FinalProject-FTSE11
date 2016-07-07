@@ -16,7 +16,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import com.github.pwittchen.reactivenetwork.library.ConnectivityStatus;
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
 import com.jacobgreenland.finalproject.league.LeagueFragment;
 import com.jacobgreenland.finalproject.league.model.League;
@@ -28,6 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import io.realm.Realm;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Communicator {
@@ -48,6 +58,16 @@ public class MainActivity extends AppCompatActivity
     public static LeagueTable chosenLeagueObject;
     public static List<Team> loadedLeagueTeams = new ArrayList<Team>();
 
+    private TextView tvConnectivityStatus;
+    private TextView tvInternetStatus;
+    private ReactiveNetwork reactiveNetwork;
+    private Subscription networkConnectivitySubscription;
+    private Subscription internetConnectivitySubscription;
+    private static final String TAG = "ReactiveNetwork";
+
+    FrameLayout mainFrame;
+    Snackbar snackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -57,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         initialiseToolbar();
 
         ((MyApp) getApplication()).getApiComponent().inject(this);
+
+        mainFrame = (FrameLayout) findViewById(R.id.mainFragment);
 
         MainFragment lF = new MainFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -76,6 +98,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
         fab.setVisibility(View.INVISIBLE);
+
+        snackbar = Snackbar
+            .make(mainFrame, "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
     }
 
     public void initialiseToolbar()
@@ -112,13 +137,27 @@ public class MainActivity extends AppCompatActivity
 
             shortLeague = shortLeague.replaceAll("\\d\\d\\d\\d\\S\\d\\d", "");
 
-            leagues.get(i).setCaption(shortLeague);
+            final String finalShortLeague = shortLeague;
+            //final int finalI1 = i;
+            final int finalI1 = i;
+            SplashScreen.realm.executeTransaction(new Realm.Transaction()
+            {
+                @Override
+                public void execute(Realm realm)
+                {
+                    leagues.get(finalI1).setCaption(finalShortLeague);
+                }
+            });
+
+            Log.d("test", "looping");
 
             final int finalI = i;
             navigationView.getMenu().add(shortLeague).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
+                    Log.d("looptest", finalI + " i hate final");
+                    Log.d("looptest", leagues.get(finalI).getCaption());
                     chosenLeagueID = leagues.get(finalI).getId().toString();
                     chosenLeague = leagues.get(finalI).getCaption();
                     drawer.closeDrawer(GravityCompat.START);
@@ -131,7 +170,7 @@ public class MainActivity extends AppCompatActivity
 
                     return true;
                 }
-            });;
+            });
         }
     }
 
@@ -201,8 +240,9 @@ public class MainActivity extends AppCompatActivity
         {
             ft.replace(id, fragment, "tabs");
         }
-        else
+        else {
             ft.replace(id, fragment, fragment.toString());
+        }
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -210,5 +250,67 @@ public class MainActivity extends AppCompatActivity
     public void loadMoreTabs()
     {
         Log.d("test", "main load more tabs :(");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reactiveNetwork = new ReactiveNetwork();
+
+        networkConnectivitySubscription =
+                reactiveNetwork.observeNetworkConnectivity(getApplicationContext())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<ConnectivityStatus>() {
+                            @Override public void call(final ConnectivityStatus status) {
+                                Log.d(TAG, status.toString());
+                                //Snackbar snackbar = new Snackbar(mainFrame, "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+                                if(status.equals(ConnectivityStatus.OFFLINE)) {
+
+                                    snackbar.show();
+                                }
+                                else
+                                {
+                                    //Log.d("")
+                                    snackbar.dismiss();
+                                }
+                            }
+                        });
+
+        internetConnectivitySubscription = reactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override public void call(Boolean isConnectedToInternet) {
+                        /*Snackbar snackbar = Snackbar
+                                .make(mainFrame, "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+                        if(isConnectedToInternet)
+                        {
+                            snackbar.show();
+                        }
+                        else
+                        {
+                            snackbar.dismiss();
+                        }*/
+
+                        //tvInternetStatus.setText(isConnectedToInternet.toString());
+                    }
+                });
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        safelyUnsubscribe(networkConnectivitySubscription, internetConnectivitySubscription);
+    }
+
+    private void safelyUnsubscribe(Subscription... subscriptions) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription != null && !subscription.isUnsubscribed()) {
+                subscription.unsubscribe();
+            }
+        }
     }
 }

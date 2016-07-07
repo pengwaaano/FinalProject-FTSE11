@@ -44,10 +44,6 @@ public class LocalLeagueSource {
             @Override
             public void execute(Realm realm) {
                 // remove single match
-                RealmResults<Team> results = realm.where(Team.class).findAll();
-                results.deleteAllFromRealm();
-
-
                 Log.d("test", "loading in data");
                 for(Team t : teams) {
                     final Team team = realm.copyToRealmOrUpdate(t);
@@ -56,11 +52,16 @@ public class LocalLeagueSource {
         });
     }
 
-    public void getTeamDataFromLocal(LeagueContract.View mView)
+    public void getTeamDataFromLocal(LeagueContract.View mView, String l)
     {
 
-        RealmResults<Team> results = realm.where(Team.class).findAll();
+        RealmResults<Team> results = realm.where(Team.class)
+                .findAll();
 
+        for(int i = 0; i <results.size(); i++) {
+            if(results.get(i).equals(null))
+                Log.d("local test", results.get(i).getName());
+        }
         MainActivity.loadedLeagueTeams = results;
 
         mView.setLeagueAdapters();
@@ -73,7 +74,7 @@ public class LocalLeagueSource {
         RealmResults<LeagueTable> result2 = realm.where(LeagueTable.class)
                 .contains("leagueCaption", leagueName)
                 .findAll();
-        //Log.d("test", result2.get(0).getTrackName());
+        Log.d("local test", result2.get(0).getLeagueCaption());
         MainActivity.chosenLeagueObject = result2.get(0);
         mView.setAdapters(result2.get(0),false);
     }
@@ -88,9 +89,10 @@ public class LocalLeagueSource {
         else
             return false;
     }
-    public boolean isTeamRealmEmpty()
+    public boolean isTeamRealmEmpty(String l)
     {
         RealmResults<Team> result2 = realm.where(Team.class)
+                .equalTo("league", l)
                 .findAll();
 
         if(result2.size() == 0)

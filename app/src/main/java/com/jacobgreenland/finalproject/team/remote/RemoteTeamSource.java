@@ -29,6 +29,8 @@ public class RemoteTeamSource {
     private Team team;
     private List<Fixture> fixtures;
     private List<Player> players;
+    FixtureParent fixtureParent;
+    TeamPlayers teamPlayers;
 
     public RemoteTeamSource()
     {
@@ -69,7 +71,7 @@ public class RemoteTeamSource {
                         }
                         else {*/
                         //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
-                            mView.setTeam(team, true);
+                            //mView.setTeam(team, true);
                             mView.showDialog();
                         //}
                     }
@@ -81,7 +83,7 @@ public class RemoteTeamSource {
                     }
                 }));
     }
-    public void getFixtures(TeamAPI _api, final boolean initialLoad, final TeamContract.View mView, final TeamRepository teamRepository, String id)
+    public void getFixtures(TeamAPI _api, final boolean initialLoad, final TeamContract.View mView, final TeamRepository teamRepository, String id, final Team t)
     {
         _subscriptions.add(_api.getFixtures(id)
                 .subscribeOn(Schedulers.io())
@@ -97,10 +99,7 @@ public class RemoteTeamSource {
                     @Override
                     public void onCompleted() {
                         Log.i("Retrofit", "onCompleted fixtures");
-                        /*if(initialLoad) {
-                            leagueRepository.getLocalSource().addData(leagues);
-                        }
-                        else {*/
+                        teamRepository.getLocalSource().addFixtureData(fixtureParent);
                         //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
                         mView.setFixtureAdapter(fixtures);
                         //mView.showDialog();
@@ -110,13 +109,16 @@ public class RemoteTeamSource {
                     public void onNext(FixtureParent fixture) {
                         Log.i("Retrofit", "onNext");
 
+                        fixtureParent = fixture;
+                        fixtureParent.setTeam(t);
+                        fixtureParent.setCode(t.getCode());
                         //Log.d("test",fixture.getFixture().getHomeTeamName());
                         fixtures = fixture.getFixtures();
                     }
                 }));
     }
 
-    public void getPlayers(TeamAPI _api, final boolean initialLoad, final TeamContract.View mView, final TeamRepository teamRepository, String id)
+    public void getPlayers(TeamAPI _api, final boolean initialLoad, final TeamContract.View mView, final TeamRepository teamRepository, String id, final Team t)
     {
         _subscriptions.add(_api.getPlayers(id)
                 .subscribeOn(Schedulers.io())
@@ -137,6 +139,7 @@ public class RemoteTeamSource {
                         }
                         else {*/
                         //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
+                        teamRepository.getLocalSource().addPlayerData(teamPlayers);
                         mView.setPlayerAdapter(players);
                         //mView.showDialog();
                         //}
@@ -146,6 +149,11 @@ public class RemoteTeamSource {
                         Log.i("Retrofit", "onNext");
 
                         Log.d("test",team.getPlayers().get(0).getName());
+
+                        teamPlayers = team;
+                        teamPlayers.setTeam(t);
+                        teamPlayers.setCode(t.getCode());
+
                         players = team.getPlayers();
                     }
                 }));

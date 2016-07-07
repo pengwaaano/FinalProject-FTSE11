@@ -6,10 +6,12 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 @Generated("org.jsonschema2pojo")
 public class League extends RealmObject {
 
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Integer id;

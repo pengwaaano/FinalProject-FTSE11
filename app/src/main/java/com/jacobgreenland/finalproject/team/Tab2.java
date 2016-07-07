@@ -3,6 +3,7 @@ package com.jacobgreenland.finalproject.team;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,11 +44,12 @@ public class Tab2 extends Fragment implements TeamContract.View{
 
     PlayerAdapter playerAdapter;
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.tab_2,container,false);
         unbinder = ButterKnife.bind(this,v);
-        comm = (Communicator) getActivity();
 
         Log.d("test", "hello this is tab 2");
         //rv = (RecyclerView) v.findViewById(R.id.tab2List);
@@ -60,7 +62,6 @@ public class Tab2 extends Fragment implements TeamContract.View{
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
-        comm = (Communicator) getActivity();
         //comm.afterViewsCreated();
         //comm = (Communicator) getActivity();
 
@@ -69,10 +70,33 @@ public class Tab2 extends Fragment implements TeamContract.View{
         rv.setLayoutManager(new LinearLayoutManager(v.getContext()));
         rv.setItemAnimator(new DefaultItemAnimator());
 
-        String players = MainActivity.chosenTeamObject.getLinks().getPlayers().getHref();
+
 
         fPresenter = new TeamPresenter(this, new TeamRepository(getActivity().getApplicationContext()));
-        fPresenter.loadPlayers(_teamapi, false, players.substring(32,players.length()));
+        final String players = MainActivity.chosenTeamObject.getLinks().getPlayers().getHref();
+
+        if(fPresenter.getRepo().getLocalSource().isPlayerRealmEmpty(MainActivity.chosenTeamObject))
+        {
+            fPresenter.loadPlayers(_teamapi, false, players.substring(32, players.length()), MainActivity.chosenTeamObject);
+        }
+        else
+        {
+            fPresenter.loadLocalPlayers(MainActivity.chosenTeamObject);
+        }
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //if (MainActivity.isOnline)
+                fPresenter.loadPlayers(_teamapi, false, players.substring(32, players.length()), MainActivity.chosenTeamObject);
+                /*else {
+                    Snackbar.make(v.findViewById(R.id.snackbarPosition), "No Internet Connection", Snackbar.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }*/
+            }
+        });
     }
 
     @Override
@@ -97,12 +121,12 @@ public class Tab2 extends Fragment implements TeamContract.View{
     @Override
     public void setPlayerAdapter(List<Player> players) {
 
-        playerAdapter = new PlayerAdapter(players, R.layout.playercard, v.getContext(), false);
-        rv.setAdapter(playerAdapter);
-        playerAdapter.notifyDataSetChanged();
-
+        if(players.size() > 0) {
+            playerAdapter = new PlayerAdapter(players, R.layout.playercard, v.getContext(), false);
+            rv.setAdapter(playerAdapter);
+            playerAdapter.notifyDataSetChanged();
+        }
         Log.d("test","Adapter attached!");
-
     }
 
     @Override

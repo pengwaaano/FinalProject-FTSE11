@@ -8,7 +8,7 @@ import io.realm.RealmObject;
 /**
  * Created by Jacob on 30/06/16.
  */
-public class Links extends RealmObject {
+public class TeamLinks extends RealmObject {
 
     @SerializedName("fixtures")
     @Expose

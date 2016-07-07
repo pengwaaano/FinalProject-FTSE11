@@ -22,8 +22,10 @@ public interface TeamContract {
 
     interface Presenter extends BasePresenter {
         void loadTeam(TeamAPI _api, final boolean initialLoad, String id);
-        void loadPlayers(TeamAPI _api, final boolean initialLoad, String id);
-        void loadFixtures(TeamAPI _api, final boolean initialLoad, String id);
+        void loadPlayers(TeamAPI _api, final boolean initialLoad, String id, Team t);
+        void loadFixtures(TeamAPI _api, final boolean initialLoad, String id, Team t);
+        void loadLocalFixtures(Team t);
+        void loadLocalPlayers(Team t);
         TeamRepository getRepo();
     }
 }

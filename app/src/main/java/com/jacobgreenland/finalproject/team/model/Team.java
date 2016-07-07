@@ -13,11 +13,14 @@ public class Team extends RealmObject {
 
     @SerializedName("_links")
     @Expose
-    private Links links;
+    private TeamLinks links;
     @SerializedName("name")
     @PrimaryKey
     @Expose
     private String name;
+
+    private String league;
+
     @SerializedName("code")
     @Expose
     private String code;
@@ -36,7 +39,7 @@ public class Team extends RealmObject {
      * @return
      * The links
      */
-    public Links getLinks() {
+    public TeamLinks getLinks() {
         return links;
     }
 
@@ -45,7 +48,7 @@ public class Team extends RealmObject {
      * @param links
      * The _links
      */
-    public void setLinks(Links links) {
+    public void setLinks(TeamLinks links) {
         this.links = links;
     }
 
@@ -67,6 +70,12 @@ public class Team extends RealmObject {
         this.name = name;
     }
 
+    public String getLeague() {
+        return league;
+    }
+    public void setLeague(String league) {
+        this.league = league;
+    }
     /**
      *
      * @return

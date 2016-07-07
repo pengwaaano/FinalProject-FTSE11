@@ -9,7 +9,7 @@ import io.realm.RealmObject;
  * Created by Jacob on 30/06/16.
  */
 
-public class Links_ extends RealmObject {
+public class LeagueLinks extends RealmObject {
 
     @SerializedName("team")
     @Expose

@@ -6,8 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
 
+import io.realm.RealmObject;
+
 @Generated("org.jsonschema2pojo")
-public class Player {
+public class Player extends RealmObject{
 
     @SerializedName("name")
     @Expose
@@ -29,7 +31,7 @@ public class Player {
     private String contractUntil;
     @SerializedName("marketValue")
     @Expose
-    private Object marketValue;
+    private String marketValue;
 
     /**
      * 
@@ -144,7 +146,7 @@ public class Player {
      * @return
      *     The marketValue
      */
-    public Object getMarketValue() {
+    public String getMarketValue() {
         return marketValue;
     }
 
@@ -153,7 +155,7 @@ public class Player {
      * @param marketValue
      *     The marketValue
      */
-    public void setMarketValue(Object marketValue) {
+    public void setMarketValue(String marketValue) {
         this.marketValue = marketValue;
     }
 

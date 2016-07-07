@@ -3,6 +3,7 @@ package com.jacobgreenland.finalproject.team;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +44,8 @@ public class Tab3 extends Fragment implements TeamContract.View{
 
     FixtureAdapter fixtureAdapter;
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.tab_3,container,false);
@@ -69,13 +72,26 @@ public class Tab3 extends Fragment implements TeamContract.View{
         rv.setLayoutManager(new LinearLayoutManager(v.getContext()));
         rv.setItemAnimator(new DefaultItemAnimator());
 
-
-
         fPresenter = new TeamPresenter(this, new TeamRepository(getActivity().getApplicationContext()));
-        String fixtures = MainActivity.chosenTeamObject.getLinks().getFixtures().getHref();
-        fPresenter.loadFixtures(_teamapi, false, fixtures.substring(32,fixtures.length()));
 
+        final String fixtures = MainActivity.chosenTeamObject.getLinks().getFixtures().getHref();
+        if(fPresenter.getRepo().getLocalSource().isFixtureRealmEmpty(MainActivity.chosenTeamObject)) {
 
+            fPresenter.loadFixtures(_teamapi, false, fixtures.substring(32, fixtures.length()), MainActivity.chosenTeamObject);
+        }
+        else
+        {
+            fPresenter.loadLocalFixtures(MainActivity.chosenTeamObject);
+        }
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fPresenter.loadFixtures(_teamapi, false, fixtures.substring(32, fixtures.length()), MainActivity.chosenTeamObject);
+            }
+        });
     }
 
     @Override
@@ -90,55 +106,22 @@ public class Tab3 extends Fragment implements TeamContract.View{
 
     @Override
     public void setTeam(Team team, boolean fromAPI) {
-
-        //MainActivity.chosenTeamObject = team;
-        /*if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerow, v.getContext(), false);
-        else
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true);
-        rv.setAdapter(leagueAdapter);
-        leagueAdapter.notifyDataSetChanged();*/
     }
     @Override
     public void setFixtureAdapter(List<Fixture> fixtures) {
 
-        fixtureAdapter = new FixtureAdapter(fixtures, R.layout.fixturecard, v.getContext(), false);
+        fixtureAdapter = new FixtureAdapter(fixtures, R.layout.fixturecardexpanded, v.getContext(), false);
         rv.setAdapter(fixtureAdapter);
         fixtureAdapter.notifyDataSetChanged();
 
         Log.d("test","Adapter attached!");
-        //MainActivity.chosenTeamObject = team;
-        /*if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerow, v.getContext(), false);
-        else
-            leagueAdapter = new LeagueAdapter(leagueTable.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true);
-        rv.setAdapter(leagueAdapter);
-        leagueAdapter.notifyDataSetChanged();*/
     }
 
     @Override
-    public void setPlayerAdapter(List<Player> players) {
-
-    }
+    public void setPlayerAdapter(List<Player> players) { }
 
     @Override
     public void showDialog() {
-        //comm.initialiseNavigationDrawer();
-        //leagueName.setText(MainActivity.chosenLeague);
-
         Log.d("test", "set photoooooo");
-
-        /*name.setText(MainActivity.chosenTeamObject.getName());
-
-        position.setText("" + MainActivity.chosenTeamPosition + getDayOfMonthSuffix(MainActivity.chosenTeamPosition));
-        league.setText(MainActivity.chosenLeagueObject.getLeagueCaption());
-
-        String fixtures = MainActivity.chosenTeamObject.getLinks().getFixtures().getHref();
-
-        fPresenter.loadFixtures(_teamapi, false, fixtures.substring(32,fixtures.length()));
-
-        /*String players = MainActivity.chosenTeamObject.getLinks().getPlayers().getHref();
-
-        fPresenter.loadPlayers(_teamapi, false, players.substring(32,players.length()));*/
     }
 }

@@ -3,9 +3,10 @@ package com.jacobgreenland.finalproject.team.local;
 import android.content.Context;
 import android.util.Log;
 
-import com.jacobgreenland.finalproject.league.model.League;
-
-import java.util.List;
+import com.jacobgreenland.finalproject.fixture.model.FixtureParent;
+import com.jacobgreenland.finalproject.player.model.TeamPlayers;
+import com.jacobgreenland.finalproject.team.TeamContract;
+import com.jacobgreenland.finalproject.team.model.Team;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -27,25 +28,101 @@ public class LocalTeamSource {
         realm = Realm.getDefaultInstance();
     }
 
-    public void addData(List<League> leagues)
+    public void addFixtureData(final FixtureParent fixtureP)
     {
-        realm.beginTransaction();
-        Log.d("test", "loading in data");
-        for(int i = 0; i < leagues.size(); i++)
+        realm.executeTransaction(new Realm.Transaction()
         {
-            League r = leagues.get(i);
-            final League finalLeague = realm.copyToRealm(r);
-        }
-        realm.commitTransaction();
+            @Override
+            public void execute(Realm realm)
+            {
+                // remove single match
+                Log.d("test", "loading in data");
+                    final FixtureParent finalFixture = realm.copyToRealmOrUpdate(fixtureP);
+            }
+        });
     }
 
-    public List<League> getDataFromLocal(String genre)
+    public void getFixtureDataFromLocal(Team t, TeamContract.View mView)
     {
         Log.d("test", "local data loading");
-        RealmResults<League> result2 = realm.where(League.class)
-                .equalTo("type", genre)
+        RealmResults<FixtureParent> result2 = realm.where(FixtureParent.class)
                 .findAll();
+
+        for(FixtureParent f : result2)
+        {
+            if(f.getTeam().getName().equals(t.getName()))
+            {
+                mView.setFixtureAdapter(f.getFixtures());
+            }
+        }
         //Log.d("test", result2.get(0).getTrackName());
-        return result2;
+        //return result2;
+    }
+
+    public boolean isFixtureRealmEmpty(Team t)
+    {
+        RealmResults<FixtureParent> result2 = realm.where(FixtureParent.class)
+                .findAll();
+        if(result2.size() == 0)
+            return true;
+
+        for(FixtureParent fp : result2)
+        {
+            if(fp.getTeam().getName().equals(t.getName()))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void addPlayerData(final TeamPlayers players)
+    {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                // remove single match
+                Log.d("test", "loading in data");
+                final TeamPlayers finalPlayers = realm.copyToRealmOrUpdate(players);
+            }
+        });
+
+    }
+
+    public void getPlayerDataFromLocal(Team t, TeamContract.View mView)
+    {
+        Log.d("test", "local data loading");
+        RealmResults<TeamPlayers> result2 = realm.where(TeamPlayers.class)
+                .findAll();
+
+        for(TeamPlayers tp : result2)
+        {
+            if(tp.getTeam().getName().equals(t.getName()))
+            {
+                mView.setPlayerAdapter(tp.getPlayers());
+            }
+        }
+        //Log.d("test", result2.get(0).getTrackName());
+        //return result2;
+    }
+
+    public boolean isPlayerRealmEmpty(Team t)
+    {
+
+        //Log.d("test", "check if realm is empty for players");
+        RealmResults<TeamPlayers> result2 = realm.where(TeamPlayers.class)
+                .findAll();
+        if(result2.size() == 0)
+            return true;
+
+        for(TeamPlayers tp : result2)
+        {
+            Log.d("test", tp.getTeam().getName() + " : " + t.getName());
+            if(tp.getTeam().getName().equals(t.getName()))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

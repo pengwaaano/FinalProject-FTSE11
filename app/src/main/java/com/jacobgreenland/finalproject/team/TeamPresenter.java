@@ -1,6 +1,7 @@
 package com.jacobgreenland.finalproject.team;
 
 import com.jacobgreenland.finalproject.league.model.League;
+import com.jacobgreenland.finalproject.team.model.Team;
 
 import java.util.List;
 
@@ -39,14 +40,24 @@ public class TeamPresenter implements TeamContract.Presenter {
         teamRepository.getRemoteSource().getTeam(_api, initialLoad, mView, teamRepository, id);
     }
     @Override
-    public void loadPlayers(TeamAPI _api, final boolean initialLoad, String id)
+    public void loadPlayers(TeamAPI _api, final boolean initialLoad, String id, Team t)
     {
-        teamRepository.getRemoteSource().getPlayers(_api, initialLoad, mView, teamRepository, id);
+        teamRepository.getRemoteSource().getPlayers(_api, initialLoad, mView, teamRepository, id, t);
     }
     @Override
-    public void loadFixtures(TeamAPI _api, final boolean initialLoad, String id)
+    public void loadFixtures(TeamAPI _api, final boolean initialLoad, String id, Team t)
     {
-        teamRepository.getRemoteSource().getFixtures(_api, initialLoad, mView, teamRepository, id);
+        teamRepository.getRemoteSource().getFixtures(_api, initialLoad, mView, teamRepository, id, t);
+    }
+    @Override
+    public void loadLocalFixtures(Team t)
+    {
+        teamRepository.getLocalSource().getFixtureDataFromLocal(t, mView);
+    }
+    @Override
+    public void loadLocalPlayers(Team t)
+    {
+        teamRepository.getLocalSource().getPlayerDataFromLocal(t, mView);
     }
     @Override
     public TeamRepository getRepo()
