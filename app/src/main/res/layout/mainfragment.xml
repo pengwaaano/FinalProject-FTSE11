@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="MainLeagueFragment"
-        android:id="@+id/textView" />
-</LinearLayout>
+        android:id="@+id/textView"
+        android:gravity="center_horizontal" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/dialogFacebookButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="0.05"
+        android:layout_marginTop="188dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignRight="@+id/dialogTwitterButton"
+        android:layout_alignEnd="@+id/dialogTwitterButton"
+        android:layout_alignLeft="@+id/dialogTwitterButton"
+        android:layout_alignStart="@+id/dialogTwitterButton" />
+
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Twitter"
+        android:id="@+id/dialogTwitterButton"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Donate"
+        android:id="@+id/mDonate"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

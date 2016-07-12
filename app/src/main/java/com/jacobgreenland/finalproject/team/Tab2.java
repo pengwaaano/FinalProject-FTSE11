@@ -133,6 +133,6 @@ public class Tab2 extends Fragment implements TeamContract.View{
     public void showDialog() {
 
         Log.d("test", "set photoooooo");
-
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

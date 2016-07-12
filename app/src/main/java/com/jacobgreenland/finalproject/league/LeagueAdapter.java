@@ -120,7 +120,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.ViewHolder
         Log.d("test", "this is better");
         MainActivity mainActivity = (MainActivity) mContext;
         TeamTabs frag = fragment;
-        mainActivity.switchContent(id, frag, view);
+        mainActivity.switchContent(id, frag);
         //}
     }
 

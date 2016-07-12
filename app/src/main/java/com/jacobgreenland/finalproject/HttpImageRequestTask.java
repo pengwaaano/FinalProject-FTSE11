@@ -14,6 +14,7 @@ import com.caverock.androidsvg.SVG;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * A class that downloads the SVG image from the Network and stores it on a file. Also it uses ImageCacheUtil to store it in cache
@@ -56,12 +57,12 @@ public class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
             imageCacheUtil.putImage(params[0], drawable);
 
-            String filename = params[0].replace("https://upload.wikimedia.org/wikipedia/commons/", "");
-                    filename.substring(5,filename.length()-1).replace(".svg", ".png");
+            String filename = URLEncoder.encode(params[0],"UTF-8").replace(".svg", ".png");
 
             imageCacheUtil.saveImageToFile(drawable, filename);
 
             return drawable;
+
         } catch (Exception e)
         {
             e.printStackTrace();

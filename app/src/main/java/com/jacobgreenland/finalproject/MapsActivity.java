@@ -3,8 +3,6 @@ package com.jacobgreenland.finalproject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.doctoror.geocoder.Address;
+import com.doctoror.geocoder.Geocoder;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -57,10 +57,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
         adresses = new ArrayList<Address>();
 
-        //String stadium = "stadium: Tottenham Hotspur";//
-        String stadium = MainActivity.chosenTeamObject.getName();
+        String stadium = "stadium: Tottenham Hotspur";
+        //String stadium = MainActivity.chosenTeamObject.getName();
 
-        new GetGeocodeLocation(getContext(),stadium,mMap);
+        new GetGeocodeLocation(getContext(),"stadium: Tottenham Hotspur",mMap);
         // Add a marker in Sydney and move the camera
 
     }
@@ -89,15 +89,15 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     protected Drawable doInBackground(String... params)
     {
         try {
-            List<Address> geoResults = gc.getFromLocationName(stadiumSearch, 1);
+            List<Address> geoResults = gc.getFromLocationName(stadiumSearch,1,false);
             while (geoResults.size()==0) {
-                geoResults = gc.getFromLocationName(stadiumSearch, 1);
+                geoResults = gc.getFromLocationName(stadiumSearch, 1, false);
             }
             if (geoResults.size()>0) {
                 Address addr = geoResults.get(0);
 
-                LatLng myLocation = new LatLng(addr.getLatitude(),addr.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(myLocation).title(addr.getFeatureName()));
+                LatLng myLocation = new LatLng(addr.getLocation().latitude,addr.getLocation().longitude);
+                mMap.addMarker(new MarkerOptions().position(myLocation).title(addr.getStreetAddress()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
             }
         } catch (Exception e) {

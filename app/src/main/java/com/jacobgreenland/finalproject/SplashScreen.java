@@ -53,9 +53,9 @@ public class SplashScreen extends AppCompatActivity
 
         realm = Realm.getDefaultInstance();
 
-        realm.beginTransaction();
-        Realm.getDefaultInstance().deleteAll();
-        realm.commitTransaction();
+        //realm.beginTransaction();
+        //Realm.getDefaultInstance().deleteAll();
+        //realm.commitTransaction();
 
         ((MyApp) getApplication()).getApiComponent().inject(this);
 

@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +26,8 @@ import com.jacobgreenland.finalproject.services.Services;
 import com.jacobgreenland.finalproject.team.model.Team;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import butterknife.BindView;
@@ -80,21 +80,28 @@ public class Tab1 extends Fragment implements TeamContract.View{
         /*Picasso.with(v.getContext())
                 .load(Uri.parse(MainActivity.chosenTeamObject.getCrestUrl()))
                 .into(badge);*/
-        if (!MainActivity.chosenTeamObject.getCrestUrl().isEmpty()) {
+        if (!MainActivity.chosenTeamObject.getCrestUrl().isEmpty())
+        {
             Log.d("testtesttest", MainActivity.chosenTeamObject.getCrestUrl());
 
             ImageCacheUtil imageCacheUtil = ImageCacheUtil.getInstance(v.getContext());
 
+            String filename = "";
+
             //we somehow get the filename replacing the end point with nothing and the file extension
-            String filename = MainActivity.chosenTeamObject.getCrestUrl().replace("https://upload.wikimedia.org/wikipedia/commons/", "")
-            .substring(5,MainActivity.chosenTeamObject.getCrestUrl().length()-1)
-            .replace(".svg", ".png");
+            try {
+                filename = URLEncoder.encode(MainActivity.chosenTeamObject.getCrestUrl(),"UTF-8").replace(".svg", ".png");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
             //first we try getting the image from local saved images
-            if (imageCacheUtil.getImageFromFile(badge, filename)) {
+            if (imageCacheUtil.getImageFromFile(badge, filename))
+            {
                 badge.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 //holder.progressBar.setVisibility(View.GONE);
-            } else {
+            } else
+            {
                 //if we haven't saved the image previously, we try getting it from our cache system.
                 //If we fail, we download it from the URL provided
                 Bitmap image = imageCacheUtil.getImage(MainActivity.chosenTeamObject.getCrestUrl());
@@ -107,7 +114,8 @@ public class Tab1 extends Fragment implements TeamContract.View{
                     new HttpImageRequestTask(v.getContext(), badge).execute(MainActivity.chosenTeamObject.getCrestUrl());
                 }
             }
-        } else {
+        }
+        else {
             //sort of placeholder if the item doesn't have a image URL
             badge.setImageResource(R.drawable.pannamatch);
         }
@@ -176,12 +184,5 @@ public class Tab1 extends Fragment implements TeamContract.View{
             favourite.setImageResource(R.drawable.favouriteunchecked);
             favouriteBool = false;
         }
-    }
-}
-class MyWebViewClient extends WebViewClient {
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        view.loadUrl(url);
-        return true;
     }
 }

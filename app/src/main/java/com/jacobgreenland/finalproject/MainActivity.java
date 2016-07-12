@@ -1,12 +1,20 @@
 package com.jacobgreenland.finalproject;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,9 +24,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.github.pwittchen.reactivenetwork.library.ConnectivityStatus;
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
@@ -27,9 +46,18 @@ import com.jacobgreenland.finalproject.league.model.League;
 import com.jacobgreenland.finalproject.league.model.LeagueTable;
 import com.jacobgreenland.finalproject.team.TeamTabs;
 import com.jacobgreenland.finalproject.team.model.Team;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 
@@ -68,6 +96,17 @@ public class MainActivity extends AppCompatActivity
     FrameLayout mainFrame;
     Snackbar snackbar;
 
+    public static Dialog dialog;
+    private CallbackManager callbackManager;
+    private TextView infoTextFacebook;
+    private LoginButton facebookLoginButton;
+    private TwitterLoginButton twitterLoginButton;
+    Button twitterTweet;
+
+    public static String fixtureTitle;
+    public static String fixtureMessage;
+    public DateTime fixtureData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -101,6 +140,115 @@ public class MainActivity extends AppCompatActivity
 
         snackbar = Snackbar
             .make(mainFrame, "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+
+        dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(R.layout.socialdialog);
+
+    }
+
+    public void checkCalendarPermissions()
+    {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_CALENDAR)) {
+                Log.d("test", "CALENDAR NOT ACTIVATED");
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+                Log.d("test", "CALENDAR ACTIVATED");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_CALENDAR},
+                        123);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 123: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("test", "PERMISSION GRANTED");
+                    addEventToCalender();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    Log.d("test", "PERMISSION DENIED");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    public boolean doesUserHavePermission()
+    {
+        int result = this.checkCallingOrSelfPermission(Manifest.permission.WRITE_CALENDAR);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void addEventToCalender() {
+
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.setData(CalendarContract.Events.CONTENT_URI);
+
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, fixtureData.getMillis());
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,fixtureData.getMillis());
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+
+        intent.putExtra(CalendarContract.Events.TITLE, fixtureTitle);
+        intent.putExtra(CalendarContract.Events.DESCRIPTION,  "Powered by PannaMatch");
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, "");
+        TimeZone tz = TimeZone.getDefault();
+        intent.putExtra(CalendarContract.Events.EVENT_TIMEZONE, tz.getID());
+
+        startActivity(intent);
+
+        /*try {
+
+            ContentValues values = new ContentValues();
+
+//          int apiLevel = android.os.Build.VERSION.SDK_INT;
+//            if(apiLevel<14){
+//              values.put("visibility", 0);
+//
+//            }
+            values.put(CalendarContract.Events.DTSTART, fixtureData.getMillis());
+            values.put(CalendarContract.Events.DTEND, fixtureData.getMillis()+90);
+            values.put(CalendarContract.Events.TITLE, MainActivity.fixtureTitle);
+            //values.put(Events.DESCRIPTION, description);
+            values.put(CalendarContract.Events.CALENDAR_ID, calIds[0]);
+            //values.put(Events.EVENT_LOCATION,place);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE,"Europe/London");
+
+            Uri mInsert = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Exception: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     public void initialiseToolbar()
@@ -175,6 +323,113 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void initialiseTwitter()
+    {
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.dialogTwitterButton);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // The TwitterSession is also available through:
+                // Twitter.getInstance().core.getSessionManager().getActiveSession()
+                TwitterSession session = result.data;
+                // TODO: Remove toast and use the TwitterSession's userID
+                // with your app's user model
+                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                twitterLoginButton.setClickable(false);
+                twitterLoginButton.setText("You are signed in.");
+            }
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TwitterKit", "Login with Twitter failure", exception);
+            }
+        });
+
+        twitterTweet = (Button) dialog.findViewById(R.id.dialogTwitterShare);
+        twitterTweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final int TWEET_COMPOSER_REQUEST_CODE = 100;
+                Intent intent = new TweetComposer.Builder(MainActivity.this)
+                        .text("I'm going to " + fixtureTitle + " on " + fixtureMessage + ".")
+                        .createIntent();
+                startActivityForResult(intent, TWEET_COMPOSER_REQUEST_CODE);
+            }
+        });
+    }
+
+    @Override
+    public void initialiseFacebook()
+    {
+        facebookLoginButton = (LoginButton) findViewById(R.id.dialogFacebookButton);
+
+        callbackManager = CallbackManager.Factory.create();
+
+        final Button shareButton = (Button) dialog.findViewById(R.id.dialogFacebookShare);
+        shareButton.setVisibility(View.GONE);
+
+        AccessToken token;
+        token = AccessToken.getCurrentAccessToken();
+
+        if (token != null) {
+            //Means user is not logged in
+            shareButton.setVisibility(View.VISIBLE);
+        }
+
+        facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                shareButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+            }
+        });
+
+
+        final ShareDialog shareDialog = new ShareDialog(this);
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog.registerCallback(callbackManager, new
+
+                FacebookCallback<Sharer.Result>() {
+                    @Override
+                    public void onSuccess(Sharer.Result result) {}
+
+                    @Override
+                    public void onCancel() {}
+
+                    @Override
+                    public void onError(FacebookException error) {}
+                });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle(MainActivity.fixtureTitle)
+                            .setContentDescription(MainActivity.fixtureMessage)
+                            .setContentUrl(Uri.parse("http://www.jacobgreenland.co.uk"))
+                            .build();
+
+                    shareDialog.show(linkContent);
+                }
+            }});
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -230,7 +485,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void switchContent(int id, Fragment fragment, View view) {
+    public void switchContent(int id, Fragment fragment) {
         //Switch Fragments method
         Log.d("Test", "Fragment changed!");
 

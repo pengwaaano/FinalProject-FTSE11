@@ -110,7 +110,7 @@ public class Tab3 extends Fragment implements TeamContract.View{
     @Override
     public void setFixtureAdapter(List<Fixture> fixtures) {
 
-        fixtureAdapter = new FixtureAdapter(fixtures, R.layout.fixturecardexpanded, v.getContext(), false);
+        fixtureAdapter = new FixtureAdapter(fixtures, R.layout.fixturecardexpanded, getContext(), false, MainActivity.dialog);
         rv.setAdapter(fixtureAdapter);
         fixtureAdapter.notifyDataSetChanged();
 
@@ -123,5 +123,6 @@ public class Tab3 extends Fragment implements TeamContract.View{
     @Override
     public void showDialog() {
         Log.d("test", "set photoooooo");
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

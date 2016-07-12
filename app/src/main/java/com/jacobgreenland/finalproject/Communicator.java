@@ -6,4 +6,6 @@ package com.jacobgreenland.finalproject;
 public interface Communicator {
     public void initialiseNavigationDrawer();
     public void loadMoreTabs();
+    public void initialiseTwitter();
+    public void initialiseFacebook();
 }

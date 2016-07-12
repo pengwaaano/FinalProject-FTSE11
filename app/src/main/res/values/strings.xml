@@ -1,8 +1,21 @@
 <resources>
-    <string name="app_name">FinalProject</string>
+    <string name="app_name">PannaMatch</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string-array name="donation_google_catalog_values">
+        <item>1 Euro</item>
+        <item>2 Euros</item>
+        <item>3 Euros</item>
+        <item>5 Euros</item>
+        <item>8 Euros</item>
+        <item>13 Euros</item>
+    </string-array>
+
+    <string name="donation_paypal_item">Donation</string>
+
+    <string name="facebook_app_id">256562514724102</string>
 </resources>
