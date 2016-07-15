@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity
     private Notification getNotification(String content)
     {
         Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("Scheduled Notification");
+        builder.setContentTitle("Tottenham Hotspur v Crystal Palace");
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.pannamatchicon);
         builder.setStyle(new Notification.BigTextStyle());
@@ -308,9 +308,9 @@ public class MainActivity extends AppCompatActivity
         realm.commitTransaction();
 
         Log.d("notifications", "notifications are being set!");
-        scheduleNotification(getNotification("30 second delay"), 5000);
+        scheduleNotification(getNotification("5 second delay"), 5000);
 
-        scheduleNotification(getNotification("30 second delay"), 10000);
+        scheduleNotification(getNotification("10 second delay"), 10000);
 
         scheduleNotification(getNotification("30 second delay"), 30000);
 

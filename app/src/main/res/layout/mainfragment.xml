@@ -63,7 +63,8 @@
             android:id="@+id/favouriteTeamName"
             android:layout_gravity="center|left"
             android:textStyle="bold"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/_10sdp" />
     </LinearLayout>
 
     <LinearLayout

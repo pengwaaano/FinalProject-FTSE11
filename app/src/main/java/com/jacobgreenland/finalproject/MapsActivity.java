@@ -9,15 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.AvoidType;
-import com.akexorcist.googledirection.model.Direction;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -84,7 +79,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        GoogleDirection.withServerKey("AIzaSyAPbKkw2VAS8lftQfUkJSJkOHsKPG0CpHg")
+        /*GoogleDirection.withServerKey("AIzaSyAPbKkw2VAS8lftQfUkJSJkOHsKPG0CpHg")
                 .from(new LatLng(location.getLatitude(), location.getLongitude()))
                 .to(new LatLng(myLocation.latitude,myLocation.longitude))
                 .avoid(AvoidType.FERRIES)
@@ -105,7 +100,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         // Do something
                         Log.d("direction", "failed");
                     }
-                });
+                });*/
         /*if (geoResults.size()>0) {
 
         }
