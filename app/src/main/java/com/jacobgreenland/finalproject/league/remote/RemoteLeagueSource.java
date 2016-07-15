@@ -120,6 +120,7 @@ public class RemoteLeagueSource {
                             Log.i("Retrofit", "onNext");
 
                             Log.d("test", team.getName());
+                            team.setLeague(MainActivity.chosenLeague + "2015/16");
                             leagueTeams.add(team);
                             //MainActivity.chosenLeagueObject = leagueT;
                         }

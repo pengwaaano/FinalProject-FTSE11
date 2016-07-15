@@ -70,45 +70,17 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
         Log.d("Test", "LeagueTable loaded");
         if(fPresenter.getRepo().getLocalSource().isRealmEmpty(MainActivity.chosenLeague))
         {
+            Log.d("Realm", "API API API API API API");
             fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
         }
         else
         {
+            Log.d("Realm", "Realm Realm Realm Realm Realm Realm");
             fPresenter.loadLocalLeagueTable(MainActivity.chosenLeague);
         }
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //if (MainActivity.isOnline)
-                fPresenter.loadLeagueTable(MainActivity._api, false, MainActivity.chosenLeagueID);
-                /*else {
-                    Snackbar.make(v.findViewById(R.id.snackbarPosition), "No Internet Connection", Snackbar.LENGTH_SHORT).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }*/
-            }
-        });
     }
-
-    /*@Override
-    public void onResume()
-    {
-        super.onResume();
-        if(MainActivity.chosenLeagueObject != null) {
-            if (fPresenter.getRepo().getLocalSource().isTeamRealmEmpty()) {
-                ArrayList<String> ids = new ArrayList<>();
-                for (Standing t : MainActivity.chosenLeagueObject.getStanding()) {
-                    ids.add(t.getLinks().getTeamLink().getHref().substring(32, t.getLinks().getTeamLink().getHref().length()));
-                }
-                fPresenter.loadTeamsOfLeague(_teamapi, false, ids, MainActivity.chosenLeagueObject.getLeagueCaption());
-            } else {
-                Log.d("test", "boo " + MainActivity.chosenLeagueObject.getLeagueCaption());
-                fPresenter.loadLocalLeagueTeams(MainActivity.chosenLeagueObject.getLeagueCaption());
-            }
-        }
-    }*/
 
     @Override
     public void setPresenter(LeagueContract.Presenter presenter) {
@@ -119,26 +91,33 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     public void setAdapters(LeagueTable leagueTable, boolean fromAPI) {
         lT = leagueTable;
 
-        if(fPresenter.getRepo().getLocalSource().isTeamRealmEmpty(lT.getLeagueCaption())) {
+        if(fPresenter.getRepo().getLocalSource().isTeamRealmEmpty(lT.getLeagueCaption()))
+        {
             ArrayList<String> ids = new ArrayList<>();
             for(Standing t : leagueTable.getStanding())
             {
                 ids.add(t.getLinks().getTeamLink().getHref().substring(32,t.getLinks().getTeamLink().getHref().length()));
             }
+            Log.d("Realm", "TEAM API API API API API API");
             fPresenter.loadTeamsOfLeague(_teamapi, false, ids, lT.getLeagueCaption());
         }
         else {
-            Log.d("test","boo " + lT.getLeagueCaption());
+            Log.d("Realm", "TEAM Realm Realm Realm Realm Realm Realm");
             fPresenter.loadLocalLeagueTeams(lT.getLeagueCaption());
         }
     }
     @Override
     public void setLeagueAdapters()
     {
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //landscapeLayout.setVisibility(View.GONE);
             leagueAdapter = new LeagueAdapter(MainActivity.chosenLeagueObject.getStanding(), R.layout.leaguetablerow, v.getContext(), false, fPresenter.getRepo());
-        else
-            leagueAdapter = new LeagueAdapter(MainActivity.chosenLeagueObject.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true,fPresenter.getRepo());
+        }
+        else {
+            //landscapeLayout.setVisibility(View.VISIBLE);
+            Log.d("orientation", "set those landscape adapters");
+            leagueAdapter = new LeagueAdapter(MainActivity.chosenLeagueObject.getStanding(), R.layout.leaguetablerowlandscape, v.getContext(), true, fPresenter.getRepo());
+        }
         rv.setAdapter(leagueAdapter);
         leagueAdapter.notifyDataSetChanged();
     }
@@ -147,21 +126,25 @@ public class LeagueFragment extends Fragment implements LeagueContract.View {
     public void showDialog() {
         //comm.initialiseNavigationDrawer();
         leagueName.setText(MainActivity.chosenLeague);
-        mSwipeRefreshLayout.setRefreshing(false);
+        //mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        int orient = getResources().getConfiguration().orientation;
+        switch(orient) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                Log.d("orientation", "landscape");
+                setLeagueAdapters();
 
-        // Checks the orientation of the screen
-        //LeagueFragment currentFragment = (LeagueFragment) getSupportFragmentManager().findFragmentById(R.id.mainFragment);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            updateAdapter();
-            //Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            updateAdapter();
-            //Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+                break;
+            case Configuration.ORIENTATION_PORTRAIT:
+                Log.d("orientation", "portrait");
+                setLeagueAdapters();
+                break;
+            default:
+                Log.d("orientation", "unspecified");
         }
     }
 

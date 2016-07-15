@@ -6,7 +6,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -37,8 +39,10 @@ import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +66,7 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
     MapsActivity mapFrag;
     RelativeLayout fInfo;
     RelativeLayout fStadium;
-    boolean open = false;
+    private boolean open = false;
     TeamAPI _api;
     Team homeTeam;
     Team awayTeam;
@@ -76,6 +80,8 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
     DateTimeFormatter formatter;
     DateTime fixtureData;
 
+    ViewHolder currentlyOpenView;
+
     public FixtureAdapter(List<Fixture> r, int rowLayout, Context context, boolean landscape, final Dialog dialog) {
 
         this.Fixtures = r;
@@ -83,6 +89,9 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         this.mContext = context;
         this.landscape = landscape;
         this.dialog = dialog;
+        this.open = false;
+
+        currentlyOpenView = null;
         notifyDataSetChanged();
 
         //dialog = new Dialog(mContext);
@@ -105,19 +114,19 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         final Fixture fixture = Fixtures.get(i);
         //Log.d("test", ""+ Standings.size());
 
-        viewHolder.HomeTeam.setText(fixture.getHomeTeamName());
-        viewHolder.AwayTeam.setText(fixture.getAwayTeamName());
+        viewHolder.HomeTeam.setText(fixture.getHomeTeamName().replace("AFC", "").replace("FC", ""));
+        viewHolder.AwayTeam.setText(fixture.getAwayTeamName().replace("AFC", "").replace("FC", ""));
 
         //MainActivity.fixtureTitle = fixture.getHomeTeamName() + " v " + fixture.getAwayTeamName();
 
 
-        viewHolder.HomeTeam.setTextColor(Color.BLACK);
-        viewHolder.AwayTeam.setTextColor(Color.BLACK);
+        viewHolder.HomeTeam.setTypeface(Typeface.DEFAULT);
+        viewHolder.AwayTeam.setTypeface(Typeface.DEFAULT);
 
         if (fixture.getHomeTeamName().equals(MainActivity.chosenTeamObject.getName()))
-            viewHolder.HomeTeam.setTextColor(mContext.getResources().getColor(R.color.ColorAccent));
+            viewHolder.HomeTeam.setTypeface(Typeface.DEFAULT_BOLD);
         else
-            viewHolder.AwayTeam.setTextColor(mContext.getResources().getColor(R.color.ColorAccent));
+            viewHolder.AwayTeam.setTypeface(Typeface.DEFAULT_BOLD);
 
         if (fixture.getStatus().equals("SCHEDULED") || fixture.getStatus().equals("TIMED"))
             viewHolder.Vs.setText("  V  ");
@@ -125,7 +134,6 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
             viewHolder.Vs.setText(fixture.getResult().getGoalsHomeTeam() + " V " + fixture.getResult().getGoalsAwayTeam());
 
         viewHolder.fixtureInfo.setVisibility(View.GONE);
-        viewHolder.fixtureStadium.setVisibility(View.GONE);
         viewHolder.fixtureSocial.setVisibility(View.GONE);
 
         /*Picasso.with(mContext)
@@ -134,11 +142,30 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         viewHolder.setClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position) {
-                if (!open) {
-
                     //viewHolder.fixtureInfo.setVisibility(View.VISIBLE);
                     //viewHolder.fixtureStadium.setVisibility(View.VISIBLE);
                     //viewHolder.fixtureSocial.setVisibility(View.VISIBLE);
+
+                    if(currentlyOpenView != null)
+                    {
+                        if(currentlyOpenView.HomeTeam.getText().equals(viewHolder.HomeTeam.getText()) &&
+                                currentlyOpenView.AwayTeam.getText().equals(viewHolder.AwayTeam.getText()))
+                        {
+                            viewHolder.fixtureInfo.startAnimation(new CustomScaleAnimation(viewHolder.fixtureInfo, false));
+                            viewHolder.fixtureSocial.startAnimation(new CustomScaleAnimation(viewHolder.fixtureSocial, false));
+                            currentlyOpenView = null;
+                        }
+                        else {
+                            currentlyOpenView.fixtureInfo.startAnimation(new CustomScaleAnimation(currentlyOpenView.fixtureInfo, false));
+                            currentlyOpenView.fixtureSocial.startAnimation(new CustomScaleAnimation(currentlyOpenView.fixtureSocial, false));
+                            currentlyOpenView = viewHolder;
+                        }
+                    }
+                    else
+                    {
+                        currentlyOpenView = viewHolder;
+                    }
+
                     fixtureData = formatter.parseDateTime(fixture.getDate());
 
                     String time = "";
@@ -160,23 +187,19 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
                     String homeT = fixture.getLinks().getHomeTeam().getHref().substring(32, fixture.getLinks().getHomeTeam().getHref().length());
                     String awayT = fixture.getLinks().getAwayTeam().getHref().substring(32, fixture.getLinks().getAwayTeam().getHref().length());
 
-                    loadTeam(homeT, true, viewHolder.homeTeamBadge);
-                    loadTeam(awayT, false, viewHolder.awayTeamBadge);
+
+                    if(viewHolder.homeTeamBadge.getDrawable() == null)
+                        loadTeam(homeT, true, viewHolder.homeTeamBadge);
+                    if(viewHolder.awayTeamBadge.getDrawable() == null)
+                        loadTeam(awayT, false, viewHolder.awayTeamBadge);
+
+                    MainActivity.stadiumAddress = getStadium(fixture);
 
                     open = true;
 
+                if(currentlyOpenView != null) {
                     viewHolder.fixtureInfo.startAnimation(new CustomScaleAnimation(viewHolder.fixtureInfo, true));
-                    viewHolder.fixtureStadium.startAnimation(new CustomScaleAnimation(viewHolder.fixtureStadium, true));
                     viewHolder.fixtureSocial.startAnimation(new CustomScaleAnimation(viewHolder.fixtureSocial, true));
-                } else {
-                    viewHolder.fixtureInfo.startAnimation(new CustomScaleAnimation(viewHolder.fixtureInfo, false));
-                    viewHolder.fixtureStadium.startAnimation(new CustomScaleAnimation(viewHolder.fixtureStadium, false));
-                    viewHolder.fixtureSocial.startAnimation(new CustomScaleAnimation(viewHolder.fixtureSocial, false));
-                    //viewHolder.fixtureInfo.setVisibility(View.GONE);
-                    //viewHolder.fixtureStadium.setVisibility(View.GONE);
-                    //viewHolder.fixtureSocial.setVisibility(View.GONE);
-
-                    open = false;
                 }
             }
         });
@@ -314,6 +337,28 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         }
     }
 
+    public Address getStadium(Fixture fixture)
+    {
+        String stadium = "stadium: " + fixture.getHomeTeamName().replace("FC","");
+
+        Log.d("map test", stadium);
+
+        Geocoder gc = new Geocoder(mContext, Locale.ENGLISH);
+        List<Address> geoResults = new ArrayList<Address>();
+
+        try
+        {
+            geoResults = gc.getFromLocationName(stadium, 1);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        if(geoResults.size() > 0)
+            return geoResults.get(0);
+        else
+            return null;
+    }
+
     private void fragmentJump(View view, boolean map) {
         //call switch content to proceed with changing fragment
             if(map) {
@@ -359,7 +404,6 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         TextView Vs;
 
         RelativeLayout fixtureInfo;
-        RelativeLayout fixtureStadium;
         RelativeLayout fixtureSocial;
 
         ImageView homeTeamBadge;
@@ -367,8 +411,8 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
         ImageView addToCalender;
         TextView time;
         TextView date;
-        TextView stadium;
-        TextView socialSignin;
+        ImageView stadium;
+        ImageView socialSignin;
 
         //@BindView(R.id.songArtwork) ImageView ResultArtwork;
         private ItemClickListener clickListener;
@@ -379,13 +423,12 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
             HomeTeam = (TextView) itemView.findViewById(R.id.fHomeTeam);
             AwayTeam = (TextView) itemView.findViewById(R.id.fAwayTeam);
 
-            HomeTeam.setTextColor(Color.BLACK);
-            AwayTeam.setTextColor(Color.BLACK);
+            HomeTeam.setTypeface(Typeface.DEFAULT);
+            AwayTeam.setTypeface(Typeface.DEFAULT);
 
             Vs = (TextView) itemView.findViewById(R.id.vs);
 
             fixtureInfo = (RelativeLayout) itemView.findViewById(R.id.fixtureInfo);
-            fixtureStadium = (RelativeLayout) itemView.findViewById(R.id.fixtureStadium);
             fixtureSocial = (RelativeLayout) itemView.findViewById(R.id.socialSignIn);
 
             homeTeamBadge = (ImageView) itemView.findViewById(R.id.fHomeBadge);
@@ -394,8 +437,8 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.ViewHold
 
             time = (TextView) itemView.findViewById(R.id.fTime);
             date = (TextView) itemView.findViewById(R.id.fDate);
-            stadium = (TextView) itemView.findViewById(R.id.fStadium);
-            socialSignin = (TextView) itemView.findViewById(R.id.socialButton);
+            stadium = (ImageView) itemView.findViewById(R.id.fStadium);
+            socialSignin = (ImageView) itemView.findViewById(R.id.socialButton);
             //ButterKnife.bind(this, itemView);
 
             itemView.setTag(itemView);

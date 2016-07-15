@@ -44,7 +44,9 @@ public class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
     {
         try
         {
-            params[0] = params[0].replace("http","https");
+            if(!params[0].contains("https"))
+                params[0] = params[0].replace("http","https");
+
             final URL url = new URL(params[0]);
             Log.d("test", "\""+url.toString() + "\"");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

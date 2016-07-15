@@ -16,14 +16,17 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/teamName"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textSize="15sp"
+            android:textStyle="bold" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="30"
             android:id="@+id/teamGamesPlayed"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -31,7 +34,8 @@
             android:text="30"
             android:id="@+id/teamPoints"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -39,7 +43,8 @@
             android:text="30"
             android:id="@+id/teamGoalDifference"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -47,7 +52,8 @@
             android:text="30"
             android:id="@+id/teamGoalsFor"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -55,7 +61,8 @@
             android:text="30"
             android:id="@+id/teamGoalsAgainst"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="@dimen/_29sdp"
@@ -64,7 +71,8 @@
             android:text="30"
             android:id="@+id/teamWins"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -72,7 +80,8 @@
             android:text="30"
             android:id="@+id/teamDraws"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
         <TextView
             android:layout_width="@dimen/_29sdp"
             android:layout_height="match_parent"
@@ -80,7 +89,8 @@
             android:text="30"
             android:id="@+id/teamLosses"
             
-            android:gravity="center" />
+            android:gravity="center"
+            android:textSize="15sp" />
 
 
 </LinearLayout>

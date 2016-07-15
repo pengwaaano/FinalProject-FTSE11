@@ -102,7 +102,7 @@ public class RemoteTeamSource {
                         teamRepository.getLocalSource().addFixtureData(fixtureParent);
                         //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
                         mView.setFixtureAdapter(fixtures);
-                        //mView.showDialog();
+                        mView.showDialog();
                         //}
                     }
                     @Override
@@ -141,7 +141,7 @@ public class RemoteTeamSource {
                         //Log.d("TEST", "ARRAY SIZE IS : " + leagueTable.getStanding().size());
                         teamRepository.getLocalSource().addPlayerData(teamPlayers);
                         mView.setPlayerAdapter(players);
-                        //mView.showDialog();
+                        mView.showDialog();
                         //}
                     }
                     @Override

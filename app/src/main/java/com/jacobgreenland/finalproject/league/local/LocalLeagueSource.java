@@ -78,6 +78,7 @@ public class LocalLeagueSource {
         MainActivity.chosenLeagueObject = result2.get(0);
         mView.setAdapters(result2.get(0),false);
     }
+
     public boolean isRealmEmpty(String league)
     {
         RealmResults<LeagueTable> result2 = realm.where(LeagueTable.class)
@@ -89,10 +90,19 @@ public class LocalLeagueSource {
         else
             return false;
     }
+
     public boolean isTeamRealmEmpty(String l)
     {
+        RealmResults<Team> result = realm.where(Team.class).findAll();
+
+        for(Team t : result)
+        {
+            Log.d("Realm", l);
+            Log.d("Realm", "" + t.getLeague());
+        }
+
         RealmResults<Team> result2 = realm.where(Team.class)
-                .equalTo("league", l)
+                .equalTo("league",l)
                 .findAll();
 
         if(result2.size() == 0)

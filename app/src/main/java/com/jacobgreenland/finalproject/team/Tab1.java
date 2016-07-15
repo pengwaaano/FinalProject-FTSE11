@@ -23,6 +23,7 @@ import com.jacobgreenland.finalproject.R;
 import com.jacobgreenland.finalproject.fixture.model.Fixture;
 import com.jacobgreenland.finalproject.player.model.Player;
 import com.jacobgreenland.finalproject.services.Services;
+import com.jacobgreenland.finalproject.team.model.FavouriteTeam;
 import com.jacobgreenland.finalproject.team.model.Team;
 
 import java.io.InputStream;
@@ -80,6 +81,16 @@ public class Tab1 extends Fragment implements TeamContract.View{
         /*Picasso.with(v.getContext())
                 .load(Uri.parse(MainActivity.chosenTeamObject.getCrestUrl()))
                 .into(badge);*/
+
+        if(MainActivity.favouriteTeam.getFavourite() != null)
+        {
+            favouriteBool = true;
+            if(MainActivity.favouriteTeam.getFavourite().getName().equals(MainActivity.chosenTeamObject.getName()))
+                favourite.setImageResource(R.drawable.favouritechecked);
+            else
+                favourite.setImageResource(R.drawable.favouriteunchecked);
+        }
+
         if (!MainActivity.chosenTeamObject.getCrestUrl().isEmpty())
         {
             Log.d("testtesttest", MainActivity.chosenTeamObject.getCrestUrl());
@@ -178,10 +189,17 @@ public class Tab1 extends Fragment implements TeamContract.View{
     {
         if(!favouriteBool) {
             favourite.setImageResource(R.drawable.favouritechecked);
+            MainActivity.realm.beginTransaction();
+            MainActivity.favouriteTeam.setFavourite(MainActivity.chosenTeamObject);
+            MainActivity.realm.commitTransaction();
             favouriteBool = true;
         }
         else {
             favourite.setImageResource(R.drawable.favouriteunchecked);
+            MainActivity.realm.beginTransaction();
+            MainActivity.favouriteTeam = new FavouriteTeam();
+            MainActivity.realm.copyToRealmOrUpdate(MainActivity.favouriteTeam);
+            MainActivity.realm.commitTransaction();
             favouriteBool = false;
         }
     }

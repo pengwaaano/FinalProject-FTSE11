@@ -1,18 +1,23 @@
 package com.jacobgreenland.finalproject;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.doctoror.geocoder.Address;
-import com.doctoror.geocoder.Geocoder;
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.model.Direction;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,7 +27,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
@@ -32,7 +36,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.activity_maps,container,false);
+        v = inflater.inflate(R.layout.activity_maps, container, false);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
@@ -41,6 +45,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         //mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
         return v;
     }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -57,16 +62,66 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
         adresses = new ArrayList<Address>();
 
-        String stadium = "stadium: Tottenham Hotspur";
-        //String stadium = MainActivity.chosenTeamObject.getName();
 
-        new GetGeocodeLocation(getContext(),"stadium: Tottenham Hotspur",mMap);
+        Address addr = MainActivity.stadiumAddress;
+
+        LatLng myLocation = new LatLng(addr.getLatitude(), addr.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(myLocation).title(addr.getFeatureName()));
+        //mMap.animateCamera( CameraUpdateFactory.zoomTo(10.0f));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
+
+        LocationManager lm = (LocationManager) v.getContext().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(v.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        GoogleDirection.withServerKey("AIzaSyAPbKkw2VAS8lftQfUkJSJkOHsKPG0CpHg")
+                .from(new LatLng(location.getLatitude(), location.getLongitude()))
+                .to(new LatLng(myLocation.latitude,myLocation.longitude))
+                .avoid(AvoidType.FERRIES)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                        if(direction.isOK()) {
+                            Log.d("direction", "pass");
+                            // Do something
+                        } else {
+                            Log.d("direction", "not good");
+                            // Do something
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something
+                        Log.d("direction", "failed");
+                    }
+                });
+        /*if (geoResults.size()>0) {
+
+        }
+        else
+        {
+            Snackbar snackbar = Snackbar
+                    .make(MainActivity.mainFrame, "Location Not Found.", Snackbar.LENGTH_INDEFINITE);
+        }
+
         // Add a marker in Sydney and move the camera
-
+*/
     }
 }
 
- class GetGeocodeLocation extends AsyncTask<String, Void, Drawable> {
+/*
+ class GetGeocodeLocation extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private String stadiumSearch;
@@ -86,19 +141,21 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    protected Drawable doInBackground(String... params)
+    protected Void doInBackground(Void... params)
     {
         try {
-            List<Address> geoResults = gc.getFromLocationName(stadiumSearch,1,false);
+            Log.d("map test","try to get location");
+            List<Address> geoResults = gc.getFromLocationName(stadiumSearch, 1);
             while (geoResults.size()==0) {
-                geoResults = gc.getFromLocationName(stadiumSearch, 1, false);
+                geoResults = gc.getFromLocationName(stadiumSearch, 1);
             }
             if (geoResults.size()>0) {
                 Address addr = geoResults.get(0);
 
-                LatLng myLocation = new LatLng(addr.getLocation().latitude,addr.getLocation().longitude);
-                mMap.addMarker(new MarkerOptions().position(myLocation).title(addr.getStreetAddress()));
+                LatLng myLocation = new LatLng(addr.getLatitude(),addr.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(myLocation).title(addr.getFeatureName()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+                mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) );
             }
         } catch (Exception e) {
             System.out.print(e.getMessage());
@@ -107,15 +164,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    protected void onPostExecute(Drawable drawable) {
+    protected void onPostExecute(Void result) {
         // Update the view
-        updateImageView(drawable);
+        super.onPostExecute(result);
+        //updateImageView(drawable);
         //this.progressBar.setVisibility(View.GONE);
     }
-
-    @SuppressLint("NewApi")
-    private void updateImageView(Drawable drawable) {
-
-    }
-}
+}*/
 

@@ -24,7 +24,7 @@
                     android:gravity="center"
                     android:layout_width="@dimen/_20sdp" />
                 <TextView
-                    android:layout_width="@dimen/_235sdp"
+                    android:layout_width="@dimen/_230sdp"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Team Name"
@@ -38,7 +38,7 @@
                     
                     android:gravity="center" />
                 <TextView
-                    android:layout_width="@dimen/_30sdp"
+                    android:layout_width="@dimen/_32sdp"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="P"
@@ -88,11 +88,6 @@
                     
                     android:gravity="center" />
             </LinearLayout>
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swiperefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -105,5 +100,4 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
-    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

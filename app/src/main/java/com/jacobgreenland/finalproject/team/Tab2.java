@@ -21,6 +21,8 @@ import com.jacobgreenland.finalproject.player.model.Player;
 import com.jacobgreenland.finalproject.services.Services;
 import com.jacobgreenland.finalproject.team.model.Team;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -122,12 +124,15 @@ public class Tab2 extends Fragment implements TeamContract.View{
     public void setPlayerAdapter(List<Player> players) {
 
         if(players.size() > 0) {
-            playerAdapter = new PlayerAdapter(players, R.layout.playercard, v.getContext(), false);
+            List<Player> tempPlayers = new ArrayList<Player>(players);
+            Collections.sort(tempPlayers);
+            playerAdapter = new PlayerAdapter(tempPlayers, R.layout.playercard, v.getContext(), false);
             rv.setAdapter(playerAdapter);
             playerAdapter.notifyDataSetChanged();
         }
         Log.d("test","Adapter attached!");
     }
+
 
     @Override
     public void showDialog() {

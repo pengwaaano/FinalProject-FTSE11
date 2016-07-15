@@ -26,6 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.realm.RealmList;
 
 /**
  * Created by Edwin on 15/02/2015.
@@ -112,6 +113,16 @@ public class Tab3 extends Fragment implements TeamContract.View{
 
         fixtureAdapter = new FixtureAdapter(fixtures, R.layout.fixturecardexpanded, getContext(), false, MainActivity.dialog);
         rv.setAdapter(fixtureAdapter);
+
+        if(MainActivity.favouriteTeam.getFavourite() != null) {
+            if (MainActivity.favouriteTeam.getFavourite().getName().equals(MainActivity.chosenTeamObject.getName())) {
+                RealmList realmFixtures = (RealmList) fixtures;
+                if(MainActivity.favouriteTeam.getFixtures() == null)
+                    MainActivity.favouriteTeam.setFixures(realmFixtures);
+                comm.setUpNotifications();
+            }
+        }
+
         fixtureAdapter.notifyDataSetChanged();
 
         Log.d("test","Adapter attached!");

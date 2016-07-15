@@ -8,4 +8,5 @@ public interface Communicator {
     public void loadMoreTabs();
     public void initialiseTwitter();
     public void initialiseFacebook();
+    public void setUpNotifications();
 }

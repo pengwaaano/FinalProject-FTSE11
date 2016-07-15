@@ -8,36 +8,135 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="MainLeagueFragment"
+        android:text="Welcome to PannaMatch."
         android:id="@+id/textView"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:textSize="30sp" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/linearLayout"
+    android:orientation="vertical">
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/dialogFacebookButton"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_weight="0.05"
-        android:layout_marginTop="188dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignRight="@+id/dialogTwitterButton"
-        android:layout_alignEnd="@+id/dialogTwitterButton"
-        android:layout_alignLeft="@+id/dialogTwitterButton"
-        android:layout_alignStart="@+id/dialogTwitterButton" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/_10sdp" />
 
     <com.twitter.sdk.android.core.identity.TwitterLoginButton
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Twitter"
         android:id="@+id/dialogTwitterButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:enabled="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp" />
 
-    <Button
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout2"
+        android:layout_below="@+id/textView4">
+        <ImageView
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/favouriteTeamBadge"
+            android:layout_above="@+id/linearLayout"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="No Favourite Team Chosen."
+            android:id="@+id/favouriteTeamName"
+            android:layout_gravity="center|left"
+            android:textStyle="bold"
+            android:gravity="center_vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_above="@+id/linearLayout"
+        android:id="@+id/fUpcomingFixturesLayout"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Upcoming Fixture:"
+            android:id="@+id/fUpcomingFixtures"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_above="@+id/linearLayout">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Large Text"
+            android:id="@+id/favHomeTeam"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textSize="15sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="  v  "
+            android:id="@+id/vs"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height = "wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Large Text"
+            android:id="@+id/favAwayTeam"
+            android:layout_alignParentEnd="true"
+            android:textSize="15sp"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Donate"
-        android:id="@+id/mDonate"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Your Team:"
+        android:id="@+id/textView4"
+        android:textSize="25sp"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_below="@+id/textView" />
+
 </RelativeLayout>

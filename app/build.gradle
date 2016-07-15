@@ -18,10 +18,11 @@ android {
 
     defaultConfig {
         applicationId "com.jacobgreenland.finalproject"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -66,15 +67,23 @@ dependencies {
     compile 'com.github.pwittchen:reactivenetwork:0.4.0'
     compile 'com.android.support:customtabs:23.4.0'
     compile 'com.google.android.gms:play-services:9.0.1'
+    compile "com.google.android.gms:play-services-gcm:9.0.1"
 
     compile 'com.github.doctoror.geocoder:library:1.0.0'
     compile 'com.paypal.sdk:paypal-android-sdk:2.14.4'
     compile 'org.sufficientlysecure:donations:2.4'
     compile 'net.danlew:android.joda:2.9.4.1'
+
+    compile 'com.akexorcist:googledirectionlibrary:1.0.4'
+
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+
     compile('com.twitter.sdk.android:twitter:1.14.1@aar') {
         transitive = true;
     }
-
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.0@aar') {
+        transitive = true;
+    }
 }
 repositories {
     mavenCentral()
@@ -84,5 +93,4 @@ repositories {
 dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:support-v4:19.1.0'
-    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

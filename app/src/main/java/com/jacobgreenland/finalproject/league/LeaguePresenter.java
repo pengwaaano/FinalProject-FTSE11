@@ -35,20 +35,17 @@ public class LeaguePresenter implements LeagueContract.Presenter {
     }
 
     @Override
-    public void loadLeagueTable(LeagueAPI _api, final boolean initialLoad, String id)
-    {
+    public void loadLeagueTable(LeagueAPI _api, final boolean initialLoad, String id) {
         leagueRepository.getRemoteSource().getLeagueTable(_api, mView, leagueRepository, id);
     }
 
     @Override
-    public void loadTeamsOfLeague(TeamAPI _api, final boolean initialLoad, List<String> id, String league)
-    {
+    public void loadTeamsOfLeague(TeamAPI _api, final boolean initialLoad, List<String> id, String league) {
         leagueRepository.getRemoteSource().getTeamsOfLeague(_api, initialLoad, mView, leagueRepository, id, league);
     }
 
     @Override
     public void loadLocalLeagueTable(String leagueTable) {
-
         leagueRepository.getLocalSource().getDataFromLocal(leagueTable, mView);
     }
     @Override

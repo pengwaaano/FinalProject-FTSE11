@@ -9,7 +9,7 @@ import javax.annotation.Generated;
 import io.realm.RealmObject;
 
 @Generated("org.jsonschema2pojo")
-public class Player extends RealmObject{
+public class Player extends RealmObject implements Comparable<Player>{
 
     @SerializedName("name")
     @Expose
@@ -38,6 +38,11 @@ public class Player extends RealmObject{
      * @return
      *     The name
      */
+
+    public int compareTo(Player other) {
+        return jerseyNumber.compareTo(other.jerseyNumber);
+    }
+
     public String getName() {
         return name;
     }

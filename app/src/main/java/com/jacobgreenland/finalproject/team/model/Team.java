@@ -18,9 +18,8 @@ public class Team extends RealmObject {
     @PrimaryKey
     @Expose
     private String name;
-
+    @SerializedName("league")
     private String league;
-
     @SerializedName("code")
     @Expose
     private String code;
@@ -76,6 +75,7 @@ public class Team extends RealmObject {
     public void setLeague(String league) {
         this.league = league;
     }
+
     /**
      *
      * @return
