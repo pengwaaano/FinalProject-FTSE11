@@ -49,6 +49,7 @@ import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jacobgreenland.finalproject.fixture.model.Fixture;
 import com.jacobgreenland.finalproject.league.LeagueAPI;
 import com.jacobgreenland.finalproject.league.LeagueFragment;
 import com.jacobgreenland.finalproject.league.model.League;
@@ -313,14 +314,14 @@ public class MainActivity extends AppCompatActivity
 
         scheduleNotification(getNotification("30 second delay"), 30000);
 
-        /*for(Fixture f : favouriteTeamFixtures)
+        for(Fixture f : favouriteTeam.getFixtures())
         {
             DateTime fDate = formatter.parseDateTime(f.getDate());
 
             long futureInMillis = fDate.getMillis() - SystemClock.elapsedRealtime();
 
             scheduleNotification(getNotification(f.getHomeTeamName() + " v " + f.getAwayTeamName()), (int)futureInMillis);
-        }*/
+        }
     }
 
     public void initialiseToolbar()
